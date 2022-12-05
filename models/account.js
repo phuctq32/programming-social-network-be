@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Schema } from 'mongoose';
 
 const accountSchema = new Schema({
     email: {
@@ -23,4 +22,5 @@ const accountSchema = new Schema({
     resetTokenExpiration: Date,
 }, { timestamps: true });
 
-module.exports = mongoose.model('Account', accountSchema);
+const Account = mongoose.model('Account', accountSchema);
+export default Account;

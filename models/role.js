@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import { Schema } from 'mongoose';
 
-const roleEnum = {
+export const roleEnum = {
     ADMIN: 'admin',
     MEMBER: 'member'
 };
@@ -15,6 +14,7 @@ const roleSchema = new Schema({
     }
 });
 
-exports.roleEnum = roleEnum;
-exports.roleSchema = mongoose.model('Role', roleSchema);
+const Role = mongoose.model('Role', roleSchema);
+export default Role;
+
 
