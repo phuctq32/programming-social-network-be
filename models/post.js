@@ -10,6 +10,16 @@ const postSchema = new Schema({
         type: String,
         required: true,
     },
+    images: [
+        {
+            type: String,
+        }
+    ],
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
+    },
     creator: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -19,6 +29,18 @@ const postSchema = new Schema({
         {
             type: Schema.Types.ObjectId,
             ref: 'User',
+        }
+    ],
+    views: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        }
+    ],
+    comments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Comment'
         }
     ]
 }, { timestamps: true });

@@ -6,10 +6,23 @@ const commentSchema = new Schema({
         type: String,
         required: true,
     },
-    parent: {
-        
+    replies: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Comment'
+        }
+    ],
+    level: {
+        type: Number,
+        min: [1, 'The min level of comment is 1'],
+        max: [3, 'The max level of comment is 3']
     },
-    creator: {}
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Comment', commentSchema);
+const Comment = mongoose.model('Comment', commentSchema);
+
+module.exports = Comment;
