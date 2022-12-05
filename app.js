@@ -1,5 +1,4 @@
 import express from 'express';
-import * as bodyParser from 'body-parser';
 
 import mongoose from 'mongoose';
 
@@ -7,7 +6,7 @@ const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
