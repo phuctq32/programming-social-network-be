@@ -1,4 +1,6 @@
-import { Schema } from 'mongoose';
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
 
 const accountSchema = new Schema({
     email: {
@@ -18,8 +20,8 @@ const accountSchema = new Schema({
         type: Date,
         min: '2022-09-05'
     },
-    resetToken: String,
-    resetTokenExpiration: Date,
+    token: String,
+    tokenExpiration: Date,
 }, { timestamps: true });
 
 const Account = mongoose.model('Account', accountSchema);

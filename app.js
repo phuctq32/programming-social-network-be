@@ -1,6 +1,6 @@
 import express from 'express';
-
 import mongoose from 'mongoose';
+import authRoutes from './routes/auth.js';
 
 const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.pfnzbiy.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`
 
@@ -15,9 +15,11 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/api', authRoutes);
+
 app.use((error, req, res, next) => {
-    const { statusCode, message, data, validationErrors } = err;
-    res.status(statusCode || 500).json({ message, data, validationErrors });
+    const { statusCode, message, data } = error;
+    res.status(statusCode || 500).json({ message, data });
 });
 
 mongoose

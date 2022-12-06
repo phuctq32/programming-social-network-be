@@ -1,16 +1,25 @@
-import { Schema } from 'mongoose';
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     name: {
         type: String,
         required: true
     },
-    role: {
-        roleId: { type: Schema.Types.ObjectId, ref: 'Role', required: true },
-        name: { type: String, required: true },
+    role: { 
+        type: Schema.Types.ObjectId, 
+        ref: 'Role', 
+        required: true 
     },
     avatar: {
-        type: String
+        type: String,
+        default: 'https://simulacionymedicina.es/wp-content/uploads/2015/11/default-avatar-300x300-1.jpg'
+    },
+    birthday: {
+        type: Date,
+        required: true,
+        default: '1901/01/01'
     },
     posts: [
         {
