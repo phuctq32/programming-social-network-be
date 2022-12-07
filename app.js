@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import roleRoutes from './routes/role.js';
 import categoryRoutes from './routes/category.js';
+import tagRoutes from './routes/tag.js';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 app.use('/api', authRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', categoryRoutes);
+app.use('/api', tagRoutes);
 
 app.use((error, req, res, next) => {
     const { statusCode, message, data } = error;
