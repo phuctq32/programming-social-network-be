@@ -90,7 +90,6 @@ export const verify = async (req, res, next) => {
             return next(error);
         }
 
-        console.log(token.userId);
         const userId = token.userId;
         const user = await User.findById(userId);
         user.isVerified = true;
