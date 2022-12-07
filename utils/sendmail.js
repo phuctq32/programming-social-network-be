@@ -49,6 +49,12 @@ const sendMail = async (emailOptions) => {
     await emailTransporter.sendMail(emailOptions);
 }
 
+const get_html_verify = (link) => `
+    <div style="font-size: 20px;">
+        Click this <a href="${link}">link</a> to verify your account.
+    </div>
+`;
+
 const get_html_reset_password = (link) => `
     <div style="font-size: 20px;">
         Click this <a href="${link}">link</a> to reset your password.
@@ -56,5 +62,5 @@ const get_html_reset_password = (link) => `
 `;
 
 export default sendMail;
-export { get_html_reset_password };
+export { get_html_reset_password, get_html_verify };
 

@@ -37,6 +37,8 @@ router.post(
     authController.signup
 );
 
+router.post('/verification/:token', authController.verify);
+
 router.post('/login', authController.login);
 
 router.post(

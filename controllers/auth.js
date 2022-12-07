@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import User from '../models/user.js';
 import Role, {roleEnum} from '../models/role.js';
 import Token from '../models/token.js';
-import sendMail, { get_html_reset_password } from '../utils/sendmail.js';
+import sendMail, { get_html_reset_password, get_html_verify } from '../utils/sendmail.js';
 
 dotenv.config();
 
@@ -35,6 +35,14 @@ export const signup = async (req, res, next) => {
         }
 
         const hashedPassword = bcrypt.hashSync(password, 12);
+        let verifiedToken;
+        crypto.randomBytes(32, (err, buffer) => {
+            if (err) {
+                return next(err);
+            }
+
+            verifiedToken = buffer.toString('hex');
+        });
         
         const user = new User({
             email,
@@ -44,7 +52,52 @@ export const signup = async (req, res, next) => {
             birthday
         });
         await user.save();
-        res.status(201).json({ message: 'Created a user successfully!'});
+
+        const token = new Token({
+            value: verifiedToken,
+            expiredAt: Date.now() + 3600000,
+            userId: user._id
+        });
+        await token.save();
+
+        sendMail({
+            from: process.env.EMAIL,
+            to: user.email,
+            subject: 'Verification Email',
+            html: get_html_verify(`${process.env.API_DOMAIN}/api/verification/${verifiedToken}`)
+        });
+
+        res.status(201).json({ message: 'Created a user successfully! Please check email to verify your account.'});
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const verify = async (req, res, next) => {
+    const verifiedToken = req.params.token;
+    
+    try {
+        const token = await Token.findOne({ value: verifiedToken });
+        if (!token) {
+            const error = new Error('Invalid token.');
+            error.statusCode = 498;
+            return next(error);
+        }
+
+        if (token.expiredAt < Date.now()) {
+            const error = new Error('Token is expired.');
+            error.statusCode = 419;
+            return next(error);
+        }
+
+        console.log(token.userId);
+        const userId = token.userId;
+        const user = await User.findById(userId);
+        user.isVerified = true;
+        await user.save();
+
+        await Token.deleteMany({ userId: userId });
+        res.json({ message: 'Account is verified!'});
     } catch (err) {
         next(err);
     }
@@ -64,6 +117,13 @@ export const login = async (req, res, next) => {
         const isValidPassword = bcrypt.compareSync(password, user.password);
         if (!isValidPassword) {
             const error = new Error('Password is incorrect.');
+            error.statusCode = 401;
+            return next(error);
+        }
+
+        // check if user is verified
+        if (!user.isVerified) {
+            const error = new Error('Account is not verified');
             error.statusCode = 401;
             return next(error);
         }
@@ -143,7 +203,6 @@ export const resetPassword = async (req, res, next) => {
 
     const passwordResetToken = req.params.token;
     const newPassword = req.body.password;
-    console.log(passwordResetToken);
 
     try {
         const token = await Token.findOne({ value: passwordResetToken });
