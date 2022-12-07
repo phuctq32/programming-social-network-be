@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { auth } from 'google-auth-library';
 
 import * as authController from '../controllers/auth.js';
 import User from '../models/user.js';

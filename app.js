@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import roleRoutes from './routes/role.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', authRoutes);
+app.use('/api', roleRoutes);
 
 app.use((error, req, res, next) => {
     const { statusCode, message, data } = error;
