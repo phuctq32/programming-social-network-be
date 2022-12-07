@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { body } from 'express-validator';
 
 import * as authController from '../controllers/auth.js';
-import Account from '../models/account.js';
+import User from '../models/user.js';
 
 const router = Router();
 
@@ -13,8 +13,8 @@ router.post(
             .isEmail()
             .withMessage('Email is not valid.')
             .custom((value, { req }) => {
-                return Account.findOne({ email: value }).then(accountDoc => {
-                    if (accountDoc) {
+                return User.findOne({ email: value }).then(userDoc => {
+                    if (userDoc) {
                         return Promise.reject('Email already exists!');
                     }
                 });
@@ -37,5 +37,26 @@ router.post(
 );
 
 router.post('/login', authController.login);
+
+router.post(
+    'reset-password',
+    [
+        body("email")
+            .isEmail()
+            .withMessage("Email is not valid.")
+            .custom((value, { req }) => {
+                return User.findOne({ email: value }).then((userDoc) => {
+                if (!userDoc) {
+                    return Promise.reject("Email is not existing.");
+                }
+                });
+            })
+            .normalizeEmail(),
+    ],
+);
+
+router.post(
+    'reset-password/:token',
+);
 
 export default router;

@@ -3,19 +3,36 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+    email: {
+        type: String,
+        required: true
+    },
     name: {
         type: String,
         required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    isVerified: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    isBanned: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    lastActiveAt: {
+        type: Date,
+        min: '2022-09-05'
     },
     role: { 
         type: Schema.Types.ObjectId, 
         ref: 'Role', 
         required: true 
-    },
-    account: {
-        type: Schema.Types.ObjectId,
-        ref: 'Account',
-        required: true
     },
     avatar: {
         type: String,
@@ -44,7 +61,7 @@ const userSchema = new Schema({
             ref: 'User',
         }
     ]
-});
+}, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
 export default User;
