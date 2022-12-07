@@ -1,14 +1,15 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import User from '../models/user.js';
 
 dotenv.config();
 
 const isAuth = async (req, res, next) => {
     const authHeader = req.get("Authorization");
     if (!authHeader) {
-        const error = new Error("Not authenticated");
+        const error = new Error("Not authenticated.");
         error.statusCode = 401;
-        throw error;
+        return next(error);
     }
 
     const token = authHeader.split(" ")[1];
@@ -17,14 +18,13 @@ const isAuth = async (req, res, next) => {
     try {
         decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     } catch (err) {
-        err.statusCode = 500;
-        throw err;
+        return next(err);
     }
 
     if (!decodedToken) {
         const error = new Error("Not authenticated.");
         error.statusCode = 401;
-        throw error;
+        return next(error);
     }
 
     req.userId = decodedToken.userId;

@@ -122,8 +122,15 @@ export const login = async (req, res, next) => {
 
         // check if user is verified
         if (!user.isVerified) {
-            const error = new Error('Account is not verified');
+            const error = new Error('Account is not verified.');
             error.statusCode = 401;
+            return next(error);
+        }
+
+        // check if user is banned
+        if (user.isBanned) {
+            const error = new Error('Account is banned.');
+            error.statusCode = 403;
             return next(error);
         }
 
