@@ -1,13 +1,15 @@
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
 import Account from '../models/account.js';
 import User from '../models/user.js';
 import Role, {roleEnum} from '../models/role.js';
 
+dotenv.config();
+
 export const signup = async (req, res, next) => {
-    const errors = validationResult(req);
     console.log(errors);
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed, entered data is incorrect.');
@@ -63,24 +65,22 @@ export const login = async (req, res, next) => {
         if (!account) {
             const error = new Error('Email is not existing.');
             error.statusCode = 401;
-            return next(error);
+            throw error;
         }
-        console.log('da tim dc account');
 
         const isValidPassword = bcrypt.compareSync(password, account.password);
         if (!isValidPassword) {
             const error = new Error('Password is incorrect.');
             error.statusCode = 401;
-            return next(error);
+            throw error;
         }
-        console.log('valid password:', isValidPassword);
 
         const token = jwt.sign(
             {
                 username: account.username,
                 accountId: account._id.toString()
             },
-            'secret',
+            process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
         
@@ -88,7 +88,7 @@ export const login = async (req, res, next) => {
         if (!user) {
             const error = new Error('User not found.');
             error.statusCode = 404;
-            return next(error);
+            throw error;
         }
         const role = await Role.findById(user.role);
         
