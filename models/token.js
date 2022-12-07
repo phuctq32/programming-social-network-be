@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const tokenSchema = new Schema({
-    token: {
+    value: {
         type: String,
         required: true
     },
-    tokenExpiration: {
+    expiredAt: {
         type: Date,
         required: true
     },

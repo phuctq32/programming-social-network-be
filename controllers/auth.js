@@ -5,6 +5,8 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import User from '../models/user.js';
 import Role, {roleEnum} from '../models/role.js';
+import Token from '../models/token.js';
+import sendMail, { get_html_reset_password } from '../utils/sendmail.js';
 
 dotenv.config();
 
@@ -82,6 +84,54 @@ export const login = async (req, res, next) => {
     }
 }
 
+export const forgotPassword = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error(errors.array()[0].msg);
+        error.statusCode = 422;
+        error.validationErrors = errors.array();
+        return next(error);
+    }
+
+    let tokenString;
+    crypto.randomBytes(32, (err, buffer) => {
+        if (err) {
+            return next(err);
+        }
+
+        tokenString = buffer.toString('hex');
+    });
+
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (!user) {
+            const error = new Error('Could not find user with token.');
+            error.statusCode = 404;
+            return next(error);
+        }
+        const token = new Token({
+            value: tokenString,
+            expiredAt: Date.now() + 3600000,
+            userId: user._id
+        });
+        await token.save();
+
+        sendMail({
+            from: process.env.EMAIL,
+            to: req.body.email,
+            subject: 'Reset Password',
+            html: get_html_reset_password(`http://localhost:8080/api/reset-password/${tokenString}`)
+        });
+
+        res.status(200).json({
+            message: 'An email was sent to your email account. Please check to reset your password!',
+            token: tokenString,
+        })
+    } catch (err) {
+        next(err);
+    }
+}
+
 export const resetPassword = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -91,5 +141,41 @@ export const resetPassword = async (req, res, next) => {
         return next(error);
     }
 
-    
+    const passwordResetToken = req.params.token;
+    const newPassword = req.body.password;
+    console.log(passwordResetToken);
+
+    try {
+        const token = await Token.findOne({ value: passwordResetToken });
+        if (!token) {
+            const error = new Error('Invalid token.');
+            error.statusCode = 498;
+            return next(error);
+        }
+
+        if (token.expiredAt < Date.now()) {
+            const error = new Error('Token is expired.');
+            error.statusCode = 419;
+            return next(error);
+        }
+
+        const userId = token.userId;
+        const user = await User.findById(token.userId);
+        if (!user) {
+            const error = new Error('Could not find user with token.');
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        const hashedPassword = bcrypt.hashSync(newPassword);
+        user.password = hashedPassword;
+        await user.save();
+
+        await Token.deleteMany({ userId: userId });
+        res.status(200).json({
+            message: 'Reset password successfully!'
+        });
+    } catch (err) {
+        next(err);
+    }
 }

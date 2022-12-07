@@ -49,13 +49,12 @@ const sendMail = async (emailOptions) => {
     await emailTransporter.sendMail(emailOptions);
 }
 
-const getHTML = (code) => `
-    <div style="text-align: center; font-size: 20px;">
-        This is your verification code:
-        <h1 style="color: red; font-size: 40px">${code}</h1>
+const get_html_reset_password = (link) => `
+    <div style="font-size: 20px;">
+        Click this <a href="${link}">link</a> to reset your password.
     </div>
 `;
 
 export default sendMail;
-export { getHTML };
+export { get_html_reset_password };
 

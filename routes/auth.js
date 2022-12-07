@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
+import { auth } from 'google-auth-library';
 
 import * as authController from '../controllers/auth.js';
 import User from '../models/user.js';
@@ -39,7 +40,7 @@ router.post(
 router.post('/login', authController.login);
 
 router.post(
-    'reset-password',
+    '/forgot-password',
     [
         body("email")
             .isEmail()
@@ -53,10 +54,24 @@ router.post(
             })
             .normalizeEmail(),
     ],
+    authController.forgotPassword
 );
 
 router.post(
-    'reset-password/:token',
+    '/reset-password/:token',
+    [
+        body('password', 'Password must have aleast 6 characters.')
+            .isLength({ min: 6 })
+            .isAlphanumeric()
+            .trim(),
+        body('confirmPassword').custom((value, { req }) => {
+            if (value !== req.body.password) {
+                throw new Error('Confirm Password does not match!');
+            }
+            return true;
+        }),
+    ],
+    authController.resetPassword
 );
 
 export default router;
