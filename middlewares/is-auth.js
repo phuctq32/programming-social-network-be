@@ -28,24 +28,6 @@ const isAuth = async (req, res, next) => {
         throw error;
     }
 
-    try {
-        const user = await User.findById(decodedToken.userId);
-        if (!user) {
-            const error = new Error("User not found.");
-            error.statusCode = 404;
-            throw error;
-        }
-
-        if (!user.isVerified) {
-            const error = new Error("User is not verified.");
-            error.statusCode = 401;
-            throw error;
-        }
-    } catch (err) {
-        err.statusCode = err.statusCode || 500;
-        return next(err);
-    }
-
     req.userId = decodedToken.userId;
     next();
 }
