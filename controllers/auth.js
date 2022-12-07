@@ -1,5 +1,6 @@
 import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 import Account from '../models/account.js';
 import User from '../models/user.js';
@@ -7,6 +8,7 @@ import Role, {roleEnum} from '../models/role.js';
 
 export const signup = async (req, res, next) => {
     const errors = validationResult(req);
+    console.log(errors);
     if (!errors.isEmpty()) {
         const error = new Error('Validation failed, entered data is incorrect.');
         error.statusCode = 422;
@@ -34,16 +36,17 @@ export const signup = async (req, res, next) => {
         const account = new Account({
             email,
             password: hashedPassword
-        });
+        })
         await account.save();
         
         const user = new User({
             name,
-            role: roleId,
+            role: role,
+            account: account,
             birthday
         });
         await user.save();
-        res.status(200).json({ message: 'Created an account successfully!'});
+        res.status(201).json({ message: 'Created an account successfully!'});
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
@@ -53,5 +56,45 @@ export const signup = async (req, res, next) => {
 }
 
 export const login = async (req, res, next) => {
+    const { email, password } = req.body;
 
+    try {
+        const account = await Account.findOne({ email });
+        if (!account) {
+            const error = new Error('Email is not existing.');
+            error.statusCode = 401;
+            return next(error);
+        }
+        console.log('da tim dc account');
+
+        const isValidPassword = bcrypt.compareSync(password, account.password);
+        if (!isValidPassword) {
+            const error = new Error('Password is incorrect.');
+            error.statusCode = 401;
+            return next(error);
+        }
+        console.log('valid password:', isValidPassword);
+
+        const token = jwt.sign(
+            {
+                username: account.username,
+                accountId: account._id.toString()
+            },
+            'secret',
+            { expiresIn: '1h' }
+        );
+        
+        const user = await User.findOne({ account: account._id });
+        if (!user) {
+            const error = new Error('User not found.');
+            error.statusCode = 404;
+            return next(error);
+        }
+        const role = await Role.findById(user.role);
+        
+        res.status(200).json({ token, user, role });
+    } catch (err) {
+        err.statusCode = err.statusCode || 500;
+        next(err);
+    }
 }

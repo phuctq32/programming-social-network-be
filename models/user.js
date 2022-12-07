@@ -12,6 +12,11 @@ const userSchema = new Schema({
         ref: 'Role', 
         required: true 
     },
+    account: {
+        type: Schema.Types.ObjectId,
+        ref: 'Account',
+        required: true
+    },
     avatar: {
         type: String,
         default: 'https://simulacionymedicina.es/wp-content/uploads/2015/11/default-avatar-300x300-1.jpg'
