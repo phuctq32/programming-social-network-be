@@ -19,7 +19,7 @@ router.post(
                     }
                 });
             })
-            .normalizeEmail(),
+            .normalizeEmail({ gmail_remove_dots: false }),
         body('name', 'Name is required.').notEmpty().trim(),
         body('password', 'Password must have aleast 6 characters.')
             .isLength({ min: 6 })
@@ -38,10 +38,8 @@ router.post(
 
 router.post('/verification/:token', authController.verify);
 
-router.post('/login', authController.login);
-
 router.post(
-    '/forgot-password',
+    '/login',
     [
         body("email")
             .isEmail()
@@ -53,7 +51,24 @@ router.post(
                 }
                 });
             })
-            .normalizeEmail(),
+            .normalizeEmail({ gmail_remove_dots: false }),
+    ],
+    authController.login);
+
+router.post(
+    '/forgot-password',
+    [
+        body("email")
+            .isEmail()
+            .withMessage("Email is not valid.")
+            .custom((value, { req }) => {
+                return User.findOne({ email: value }).then((userDoc) => {
+                    if (!userDoc) {
+                        return Promise.reject("Email is not existing.");
+                    }
+                });
+            })
+            .normalizeEmail({ gmail_remove_dots: false }),
     ],
     authController.forgotPassword
 );
