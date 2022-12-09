@@ -13,9 +13,9 @@ dotenv.config();
 export const signup = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        const error = new Error('Validation failed, entered data is incorrect.');
+        const error = new Error(errors.array()[0].msg);
         error.statusCode = 422;
-        error.data = errors.array();
+        error.validationErrors = errors.array();
         return next(error);
     }
 

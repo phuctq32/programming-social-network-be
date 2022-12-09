@@ -27,8 +27,8 @@ app.use('/api', categoryRoutes);
 app.use('/api', tagRoutes);
 
 app.use((error, req, res, next) => {
-    const { statusCode, message, data } = error;
-    res.status(statusCode || 500).json({ message, data });
+    const { statusCode, message, data, validationErrors } = error;
+    res.status(statusCode || 500).json({ message, data, validationErrors });
 });
 
 mongoose
