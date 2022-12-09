@@ -33,7 +33,7 @@ export const createTag = async (req, res, next) => {
     }
 
     const categoryId = req.body.categoryId;
-    const tagName = req.body.tag;
+    const tagName = req.body.name;
     try {
         const category = await Category.findById(categoryId);
         if (!category) {

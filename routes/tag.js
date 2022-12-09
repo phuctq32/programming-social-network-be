@@ -15,6 +15,7 @@ router.post(
     [
         body('name')
             .notEmpty().withMessage('The name of tag is required.')
+            .trim()
     ],  
     tagController.createTag);
 

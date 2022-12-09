@@ -106,6 +106,8 @@ export const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
+        const user = await User.findOne({ email: email });
+
         const isValidPassword = bcrypt.compareSync(password, user.password);
         if (!isValidPassword) {
             const error = new Error('Password is incorrect.');
