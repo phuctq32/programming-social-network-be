@@ -18,7 +18,7 @@ const uploadImage = (file, options) => {
             file,
             {
                 public_id: options.fileName,
-                folder: options.path
+                folder: options.folder
             },
             (err, res) => {
                 if (err) {

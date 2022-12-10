@@ -16,6 +16,11 @@ const postSchema = new Schema({
             type: String,
         }
     ],
+    tag: {
+        type: Schema.Types.ObjectId,
+        ref: 'Tag',
+        required: true
+    },
     category: {
         type: Schema.Types.ObjectId,
         ref: 'Category',

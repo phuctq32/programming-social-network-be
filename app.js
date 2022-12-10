@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.js';
 import roleRoutes from './routes/role.js';
 import categoryRoutes from './routes/category.js';
 import tagRoutes from './routes/tag.js';
+import postRoutes from './routes/post.js';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', authRoutes);
+app.use('/api', postRoutes);
 app.use('/api', roleRoutes);
 app.use('/api', categoryRoutes);
 app.use('/api', tagRoutes);
