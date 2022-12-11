@@ -25,6 +25,6 @@ router.get('/posts/:postId', postController.getPost);
 
 router.post('/post', isAuth, multer.array('images'), postValidation, postController.createPost);
 
-router.put('/posts/:postId', isAuth, multer.array('images'), postValidation);
+router.put('/posts/:postId', isAuth, multer.array('images'), postValidation, postController.editPost);
 
 export default router;
