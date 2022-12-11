@@ -14,6 +14,26 @@ export const getPosts = async (req, res, next) => {
     }
 }
 
+export const getPost = async (req, res, next) => {
+    const postId = req.params.postId;
+
+    try {
+        const post = await Post.findById(postId)
+            .populate('creator')
+            .populate('tag')
+            .populate('category');
+        if (!post) {
+            const error = new Error('Post not found.');
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        res.status(200).json(post);
+    } catch (err) {
+        next(err);
+    }
+}
+
 export const createPost = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -72,4 +92,8 @@ export const createPost = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+}
+
+export const editPost =  async (req, res, next) => {
+
 }
