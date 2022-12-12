@@ -31,7 +31,7 @@ router.delete('/posts/:postId/delete', isAuth, postController.deletePost);
 
 router.put('/posts/:postId/like', isAuth, postController.like);
 
-router.put('/posts/:postId/unlike', isAuth);
+router.put('/posts/:postId/unlike', isAuth, postController.unlike);
 
 router.put('/posts/:postId/view', isAuth);
 

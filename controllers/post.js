@@ -242,3 +242,29 @@ export const like = async (req, res, next) => {
         next(err);
     }
 }
+
+export const unlike = async (req, res, next) => {
+    const postId = req.params.postId;
+    const userId = req.userId;
+    try {
+        const post = await Post.findById(postId);
+        if (!post) {
+            const error = new Error('Post not found.');
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        let updatedLikes = post.likes;
+        if (updatedLikes.includes(userId)) {
+            updatedLikes = updatedLikes.filter(like => like.toString() !== userId.toString());
+            post.likes = updatedLikes;
+            post.save();
+        }
+
+        await post.populate('likes', 'name');
+
+        res.status(200).json({ post: post });
+    } catch (err) {
+        next(err);
+    }
+}
