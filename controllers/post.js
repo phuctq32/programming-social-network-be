@@ -237,7 +237,7 @@ export const like = async (req, res, next) => {
         await post.populate('likes', 'name');
 
 
-        res.status(200).json({post: post});
+        res.status(200).json({ post: post, totalLikes: post.likes.length });
     } catch (err) {
         next(err);
     }
@@ -263,7 +263,31 @@ export const unlike = async (req, res, next) => {
 
         await post.populate('likes', 'name');
 
-        res.status(200).json({ post: post });
+        res.status(200).json({ post: post, totalLikes: post.likes.length });
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const view = async (req, res, next) => {
+    const postId = req.params.postId;
+    const userId = req.userId;
+    try {
+        const post = await Post.findById(postId);
+        if (!post) {
+            const error = new Error('Post not found.');
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        const updatedViews = post.views;
+        if (!updatedViews.includes(userId)) {
+            updatedViews.push(userId);
+            post.views = updatedViews;
+            await post.save();
+        }
+
+        res.status(200).json({ post: post, totalViews: post.views.length });
     } catch (err) {
         next(err);
     }

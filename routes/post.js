@@ -33,6 +33,6 @@ router.put('/posts/:postId/like', isAuth, postController.like);
 
 router.put('/posts/:postId/unlike', isAuth, postController.unlike);
 
-router.put('/posts/:postId/view', isAuth);
+router.put('/posts/:postId/view', isAuth, postController.view);
 
 export default router;
