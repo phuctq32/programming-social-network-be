@@ -13,6 +13,10 @@ const commentSchema = new Schema({
             ref: 'Comment'
         }
     ],
+    totalLikes: {
+        type: Number,
+        default: 0
+    },
     level: {
         type: Number,
         min: [1, 'The min level of comment is 1'],
