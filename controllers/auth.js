@@ -64,7 +64,7 @@ export const signup = async (req, res, next) => {
             from: process.env.EMAIL,
             to: user.email,
             subject: 'Verification Email',
-            html: get_html_verify(`${process.env.API_DOMAIN}/api/verification/${verifiedToken}`)
+            html: get_html_verify(`${process.env.LOCAL_HOST}/api/verification/${verifiedToken}`)
         });
 
         res.status(201).json({ message: 'Created a user successfully! Please check email to verify your account.'});

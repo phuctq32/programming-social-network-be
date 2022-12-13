@@ -15,6 +15,7 @@ const createTransporter = async () => {
     oauth2Client.setCredentials({
         refresh_token: process.env.REFRESH_TOKEN
     });
+    console.log(oauth2Client);
 
     const accessToken = await new Promise((resolve, reject) => {
         oauth2Client.getAccessToken((err, token) => {
