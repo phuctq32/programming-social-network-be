@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { body, check } from "express-validator";
 import * as postController from '../controllers/post.js';
-import isAuth from "../middlewares/is-auth.js";
+import isAuth from "../middlewares/isAuth.js";
 import multer from "../utils/multer.js";
 
 const router = Router();

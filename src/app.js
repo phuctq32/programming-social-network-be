@@ -1,12 +1,8 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import db from './configs/database.js';
-import dotenv from 'dotenv';
-import indexRoutes from './api/routes/index.js';
 import cors from 'cors';
-
-dotenv.config();
-
+import db from './configs/database.js';
+import indexRoutes from './api/routes/index.js';
+import errorHandler from './api/middlewares/errorHandler.js';
 
 const app = express();
 
@@ -23,10 +19,10 @@ app.use(cors(corsOptions));
 
 app.use(indexRoutes);
 
-app.use((error, req, res, next) => {
-    const { statusCode, message, data, validationErrors } = error;
-    res.status(statusCode || 500).json({ message, data, validationErrors });
-});
+app.use(errorHandler);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => { console.log('DB connected');})
+db.once('open', () => {
+    app.listen(process.env.PORT || 8080);
+    console.log('DB connected');
+});

@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import * as categoryController from '../controllers/category.js';
-import isAdmin from '../middlewares/is-admin.js';
-import isAuth from '../middlewares/is-auth.js';
+import isAdmin from '../middlewares/isAdmin.js';
+import isAuth from '../middlewares/isAuth.js';
 import Category from '../models/category.js';
 
 const router = Router();

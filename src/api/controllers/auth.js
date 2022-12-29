@@ -103,6 +103,13 @@ export const verify = async (req, res, next) => {
 }
 
 export const login = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const error = new Error(errors.array()[0].msg);
+        error.statusCode = 422;
+        error.validationErrors = errors.array();
+        return next(error);
+    }
     const { email, password } = req.body;
 
     try {

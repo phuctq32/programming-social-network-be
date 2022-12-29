@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 import * as tagController from '../controllers/tag.js';
-import isAdmin from '../middlewares/is-admin.js';
-import isAuth from '../middlewares/is-auth.js';
+import isAdmin from '../middlewares/isAdmin.js';
+import isAuth from '../middlewares/isAuth.js';
 import Tag from '../models/tag.js';
 
 const router = Router();
