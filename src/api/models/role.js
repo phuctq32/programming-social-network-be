@@ -1,17 +1,13 @@
 import mongoose from "mongoose";
+import { roleNames } from "../../configs/constants";
 
 const Schema = mongoose.Schema;
-
-export const roleEnum = {
-    ADMIN: 'admin',
-    MEMBER: 'member'
-};
 
 const roleSchema = new Schema({
     name: {
         type: String,
-        enum: roleEnum,
-        default: roleEnum.MEMBER,
+        enum: roleNames,
+        default: roleNames.MEMBER,
         required: true,
     }
 });
