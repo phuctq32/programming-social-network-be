@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import User from '../models/user.js';
 import Role, {roleEnum} from '../models/role.js';
 import Token from '../models/token.js';
-import sendMail, { get_html_reset_password, get_html_verify } from '../utils/sendmail.js';
+import sendMail, { get_html_reset_password, get_html_verify } from '../utils/sendMail.js';
 
 dotenv.config();
 

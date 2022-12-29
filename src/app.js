@@ -23,6 +23,10 @@ app.use(errorHandler);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
-    app.listen(process.env.PORT || 8080);
     console.log('DB connected');
+    const port = process.env.PORT || 8080;
+    app.listen(port, (err) => {
+        if (err) console.log(err);
+        console.log('Server is running on port: ' + port);
+    });
 });

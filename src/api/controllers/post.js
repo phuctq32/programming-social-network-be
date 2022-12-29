@@ -3,7 +3,7 @@ import Category from '../models/category.js';
 import Post from '../models/post.js';
 import Tag from '../models/tag.js';
 import User from '../models/user.js';
-import * as cloudinary from '../utils/cloudinary.js';
+import * as imageHandler from '../utils/imageHandler.js';
 
 export const getPosts = async (req, res, next) => {
     try {
@@ -75,9 +75,9 @@ export const createPost = async (req, res, next) => {
         if (files) {
             uploadedImages = await Promise.all(
                 files.map(async (file, index) => {
-                    const uploadedImage = await cloudinary.uploadImage(file.path, {
+                    const uploadedImage = await imageHandler.uploadImage(file.path, {
                         fileName: index.toString(),
-                        folder: cloudinary.path.forPost(req.userId.toString(), newPost._id.toString()),
+                        folder: imageHandler.path.forPost(req.userId.toString(), newPost._id.toString()),
                     });
     
                     return uploadedImage.url;
@@ -145,16 +145,16 @@ export const editPost =  async (req, res, next) => {
 
         // Delete old images
         if (editingPost.images.length > 0) {
-            await cloudinary.deleteFolder(cloudinary.path.forPost(req.userId, editingPost._id.toString()));
+            await imageHandler.deleteFolder(imageHandler.path.forPost(req.userId, editingPost._id.toString()));
         }
         
         let uploadedImages = [];
         if (files) {
             uploadedImages = await Promise.all(
                 files.map(async (file, index) => {
-                    const uploadedImage = await cloudinary.uploadImage(file.path, {
+                    const uploadedImage = await imageHandler.uploadImage(file.path, {
                         fileName: index.toString(),
-                        folder: cloudinary.path.forPost(req.userId.toString(), editingPost._id.toString()),
+                        folder: imageHandler.path.forPost(req.userId.toString(), editingPost._id.toString()),
                     });
                     
                     return uploadedImage.url;
@@ -195,7 +195,7 @@ export const deletePost = async (req, res, next) => {
 
         // Delete images
         if (post.images.length > 0) {
-            await cloudinary.deleteFolder(cloudinary.path.forPost(req.userId, post._id.toString()));
+            await imageHandler.deleteFolder(imageHandler.path.forPost(req.userId, post._id.toString()));
         }
 
         // Delete post in savedPost of all users

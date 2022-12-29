@@ -1,14 +1,8 @@
-import cloudinary from 'cloudinary';
-
-cloudinary.v2.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
+import cloudinary from '../../configs/cloudinary.js';
 
 const uploadImage = (file, options) => {    
     return new Promise((resolve, reject) => {
-        cloudinary.v2.uploader.upload(
+        cloudinary.uploader.upload(
             file,
             {
                 public_id: options.fileName,
@@ -26,11 +20,11 @@ const uploadImage = (file, options) => {
 
 const deleteFolder = (folder) => {
     return new Promise((resolve, reject) => {
-        cloudinary.v2.api.delete_resources_by_prefix(folder, (err, res) => {
+        cloudinary.api.delete_resources_by_prefix(folder, (err, res) => {
             if (err) {
                 return reject(err);
             }
-            cloudinary.v2.api.delete_folder(folder, (err, res) => {
+            cloudinary.api.delete_folder(folder, (err, res) => {
                 if (err) {
                     return reject(err);
                 }
