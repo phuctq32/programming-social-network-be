@@ -1,43 +1,32 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import db from './configs/database.js';
 import dotenv from 'dotenv';
-import indexRoute from './api/routes/index.js';
+import indexRoutes from './api/routes/index.js';
+import cors from 'cors';
 
 dotenv.config();
 
-const MONGODB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.pfnzbiy.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ limit: '50mb', extended: false }));
 
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    allowHeaders: ['Content-Type', 'Authorization']
+};
 
-app.use(indexRoute);
+app.use(cors(corsOptions));
+
+app.use(indexRoutes);
 
 app.use((error, req, res, next) => {
     const { statusCode, message, data, validationErrors } = error;
     res.status(statusCode || 500).json({ message, data, validationErrors });
 });
 
-mongoose
-    .connect(
-        MONGODB_URI,
-        {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        }
-    )
-    .then(result => {
-        app.listen(process.env.PORT || 8080);
-        console.log('connected');
-    })
-    .catch(err => {
-        console.log(err);
-    });
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => { console.log('DB connected');})
