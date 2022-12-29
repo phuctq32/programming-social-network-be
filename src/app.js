@@ -1,11 +1,11 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth.js';
-import roleRoutes from './routes/role.js';
-import categoryRoutes from './routes/category.js';
-import tagRoutes from './routes/tag.js';
-import postRoutes from './routes/post.js';
+import authRoutes from './api/routes/auth.js';
+import roleRoutes from './api/routes/role.js';
+import categoryRoutes from './api/routes/category.js';
+import tagRoutes from './api/routes/tag.js';
+import postRoutes from './api/routes/post.js';
 
 dotenv.config();
 

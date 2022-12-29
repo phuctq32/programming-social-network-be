@@ -6,12 +6,6 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const getImage = (options) => {
-    return new Promise((resolve, reject) => {
-        cloudinary.v2.api.resource()
-    });
-}
-
 const uploadImage = (file, options) => {    
     return new Promise((resolve, reject) => {
         cloudinary.v2.uploader.upload(
