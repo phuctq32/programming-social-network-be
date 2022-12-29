@@ -36,14 +36,6 @@ export const getPost = async (req, res, next) => {
 }
 
 export const createPost = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error(errors.array()[0].msg);
-        error.statusCode = 422;
-        error.validationErrors = errors.array();
-        return next(error);
-    }
-    
     const { title, content, tagId, categoryId } = req.body;
     const files = req.files;
     
@@ -98,14 +90,6 @@ export const createPost = async (req, res, next) => {
 }
 
 export const editPost =  async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error(errors.array()[0].msg);
-        error.statusCode = 422;
-        error.validationErrors = errors.array();
-        return next(error);
-    }
-    
     const postId = req.params.postId;
     const { title, content, tagId, categoryId } = req.body;
     const files = req.files;

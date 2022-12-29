@@ -12,14 +12,6 @@ export const getCategories = async (req, res, next) => {
 }
 
 export const createCategory = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error(errors.array()[0].msg);
-        error.statusCode = 422;
-        error.validationErrors = errors.array();
-        return next(error);
-    }
-
     const name = req.body.name;
     try {
         const category = new Category({ name: name });

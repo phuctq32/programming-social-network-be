@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body, check } from "express-validator";
 import * as postController from '../controllers/post.js';
 import isAuth from "../middlewares/isAuth.js";
+import validationErrorHandler from "../middlewares/validationErrorHandler.js";
 import multer from "../utils/multer.js";
 
 const router = Router();
@@ -23,9 +24,9 @@ router.get('/posts', postController.getPosts);
 
 router.get('/posts/:postId', postController.getPost);
 
-router.post('/post', isAuth, multer.array('images'), postValidation, postController.createPost);
+router.post('/post', isAuth, multer.array('images'), postValidation, validationErrorHandler, postController.createPost);
 
-router.put('/posts/:postId/edit', isAuth, multer.array('images'), postValidation, postController.editPost);
+router.put('/posts/:postId/edit', isAuth, multer.array('images'), postValidation, validationErrorHandler, postController.editPost);
 
 router.delete('/posts/:postId/delete', isAuth, postController.deletePost);
 

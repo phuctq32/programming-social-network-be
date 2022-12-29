@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 
 import * as authController from '../controllers/auth.js';
 import User from '../models/user.js';
+import validationErrorHandler from '../middlewares/validationErrorHandler.js';
 
 const router = Router();
 
@@ -33,6 +34,7 @@ router.post(
         }),
         body('birthday', 'Date is not valid.').isDate(),
     ],
+    validationErrorHandler,
     authController.signup
 );
 
@@ -53,6 +55,7 @@ router.post(
             })
             .normalizeEmail({ gmail_remove_dots: false }),
     ],
+    validationErrorHandler,
     authController.login);
 
 router.post(
@@ -70,6 +73,7 @@ router.post(
             })
             .normalizeEmail({ gmail_remove_dots: false }),
     ],
+    validationErrorHandler,
     authController.forgotPassword
 );
 
@@ -87,6 +91,7 @@ router.post(
             return true;
         }),
     ],
+    validationErrorHandler,
     authController.resetPassword
 );
 

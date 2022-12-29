@@ -24,14 +24,6 @@ export const getTagsByCategoryId = async (req, res, next) => {
 }
 
 export const createTag = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        const error = new Error(errors.array()[0].msg);
-        error.statusCode = 422;
-        error.validationErrors = errors.array();
-        return next(error);
-    }
-
     const categoryId = req.body.categoryId;
     const tagName = req.body.name;
     try {
