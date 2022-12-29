@@ -1,11 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import authRoutes from './api/routes/auth.js';
-import roleRoutes from './api/routes/role.js';
-import categoryRoutes from './api/routes/category.js';
-import tagRoutes from './api/routes/tag.js';
-import postRoutes from './api/routes/post.js';
+import indexRoute from './api/routes/index.js';
 
 dotenv.config();
 
@@ -23,11 +19,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api', authRoutes);
-app.use('/api', postRoutes);
-app.use('/api', roleRoutes);
-app.use('/api', categoryRoutes);
-app.use('/api', tagRoutes);
+app.use(indexRoute);
 
 app.use((error, req, res, next) => {
     const { statusCode, message, data, validationErrors } = error;
