@@ -1,11 +1,11 @@
-import { validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import User from '../models/user.js';
-import Role, {roleEnum} from '../models/role.js';
+import Role from '../models/role.js';
 import Token from '../models/token.js';
+import { getRoleById } from '../services/role.js';
 import sendMail, { get_html_reset_password, get_html_verify } from '../utils/sendMail.js';
 
 dotenv.config();
@@ -19,12 +19,14 @@ export const signup = async (req, res, next) => {
         birthday
     } = req.body;
     try {
-        const role = await Role.findById(roleId);
-        if (!role) {
-            const error = new Error('Role is not existing!');
-            error.statusCode = 404;
-            return next(error);
-        }
+        console.log('das');
+        // const role = await Role.findById(roleId);
+        // if (!role) {
+        //     const error = new Error('Role is not existing!');
+        //     error.statusCode = 404;
+        //     return next(error);
+        // }
+        const role = await getRoleById(roleId);
 
         const hashedPassword = bcrypt.hashSync(password, 12);
         let verifiedToken;

@@ -1,5 +1,6 @@
-import Role, { roleEnum } from "../models/role.js";
+import Role from "../models/role.js";
 import User from "../models/user.js";
+import { roleNames } from "../../configs/constants.js";
 
 const isAdmin = async (req, res, next) => {
     const userId = req.userId;
@@ -11,7 +12,7 @@ const isAdmin = async (req, res, next) => {
             return next(error);
         }
 
-        const adminRole = await Role.findOne({ name: roleEnum.ADMIN });
+        const adminRole = await Role.findOne({ name: roleNames.ADMIN });
 
         if (user.role.toString() !== adminRole._id.toString()) {
             const error = new Error('Your account is not an administrator.');

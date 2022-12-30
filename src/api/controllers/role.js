@@ -1,13 +1,10 @@
-import Role, { roleEnum } from '../models/role.js';
+import * as roleService from '../services/role.js';
 
 export const getRoles = async (req, res, next) => {
     try {   
-        const roles = await Role.find();
+        const { roles, numberOfRoles } = await roleService.getRoles();
         
-        res.status(200).json({
-            roles,
-            totalRoles: roles.length
-        });
+        res.status(200).json({ roles, numberOfRoles });
     } catch (err) {
         next(err);
     }

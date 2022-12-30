@@ -1,4 +1,3 @@
-import { validationResult } from 'express-validator';
 import Category from '../models/category.js';
 import Tag from '../models/tag.js';
 
