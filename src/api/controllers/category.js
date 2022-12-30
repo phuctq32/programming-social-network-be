@@ -1,20 +1,18 @@
-import Category from '../models/category.js';
+import * as categoryService from '../services/category.js';
 
 export const getCategories = async (req, res, next) => {
     try {
-        const categories = await Category.find();
+        const categories = await categoryService.getCategories();
         
-        res.json({ categories });
+        res.status(200).json({ categories });
     } catch (err) {
         next(err);
     }
 }
 
 export const createCategory = async (req, res, next) => {
-    const name = req.body.name;
     try {
-        const category = new Category({ name: name });
-        await category.save();
+        const category = await categoryService.createCategory(req.body.name);
 
         res.status(201).json({
             message: 'Created a category successfully',

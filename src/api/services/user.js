@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import User from '../models/user.js';
-import Token from '../models/token.js';
 import * as roleService from '../services/role.js';
 import * as tokenService from '../services/token.js';
 import sendMail, { get_html_reset_password, get_html_verify } from '../utils/sendMail.js'
