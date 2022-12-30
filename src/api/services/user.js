@@ -26,6 +26,16 @@ const createUser = async (userData) => {
     }
 }
 
+const getUsers = async () => {
+    try {
+        const users = await User.find();
+
+        return users;
+    } catch (err) {
+        throw err;
+    }
+}
+
 const getUserByEmail = async (email, options) => {
     try {
         const user = await User.findOne({ email: email }).populate(options);
@@ -188,5 +198,7 @@ export {
     login,
     verify,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getUsers,
+    getUserById
 };

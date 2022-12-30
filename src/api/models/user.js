@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { DEFAULT_AVATAR_URL } from "../../configs/constants.js";
 
 const Schema = mongoose.Schema;
 
@@ -36,7 +37,7 @@ const userSchema = new Schema({
     },
     avatar: {
         type: String,
-        default: 'https://simulacionymedicina.es/wp-content/uploads/2015/11/default-avatar-300x300-1.jpg'
+        default: DEFAULT_AVATAR_URL
     },
     birthday: {
         type: Date,

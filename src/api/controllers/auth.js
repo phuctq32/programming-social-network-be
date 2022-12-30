@@ -1,15 +1,4 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
-import dotenv from 'dotenv';
-import User from '../models/user.js';
-import Role from '../models/role.js';
-import Token from '../models/token.js';
-import sendMail, { get_html_reset_password, get_html_verify } from '../utils/sendMail.js';
-
 import * as userService from '../services/user.js';
-
-dotenv.config();
 
 export const signup = async (req, res, next) => {
     try {
@@ -25,8 +14,9 @@ export const verify = async (req, res, next) => {
     const verifiedToken = req.params.token;
     
     try {
-        await userService.v
-        res.json({ message: 'Account is verified!'});
+        await userService.verify(verifiedToken);
+
+        res.status(200).json({ message: 'Account is verified!'});
     } catch (err) {
         next(err);
     }

@@ -13,7 +13,24 @@ const createCategory = async (name) => {
 
 const getCategories = async () => {
     try {
-        return await Category.find();
+        const categories = await Category.find();
+
+        return categories;
+    } catch (err) {
+        throw err;
+    }
+}
+
+const getCategoryById = async (id) => {
+    try {
+        const category = await Category.findById(id);
+        if (!category) {
+            const error = new Error('Category not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        return category;
     } catch (err) {
         throw err;
     }
@@ -21,5 +38,6 @@ const getCategories = async () => {
 
 export {
     createCategory,
-    getCategories
+    getCategories,
+    getCategoryById
 };
