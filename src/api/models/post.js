@@ -51,5 +51,23 @@ const postSchema = new Schema({
     ]
 }, { timestamps: true });
 
+postSchema.statics.getById = async (id) => {
+    try {
+        const post = await Post.findById(postId)
+            .populate('category')
+            .populate('tag', 'name')
+            .populate('creator', 'name');
+        if (!post) {
+            const error = new Error('Post not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        return post;
+    } catch (err) {
+        throw err;
+    }
+}
+
 const Post = mongoose.model('Post', postSchema);
 export default Post;

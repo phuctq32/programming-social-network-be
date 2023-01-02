@@ -1,16 +1,5 @@
 import Role from "../models/role.js";
 
-const getRoleById = async (id) => {
-    const role = await Role.findById(id);
-    if (!role) {
-        const error = new Error('Role is not existing!');
-        error.statusCode = 404;
-        throw error;
-    }
-
-    return role;
-}
-
 const getRoles = async () => {
     try {
         const roles = await Role.find();
@@ -23,6 +12,5 @@ const getRoles = async () => {
 }
 
 export {
-    getRoleById,
     getRoles
 };

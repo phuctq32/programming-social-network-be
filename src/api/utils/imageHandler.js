@@ -1,6 +1,6 @@
 import cloudinary from '../../configs/cloudinary.js';
 
-const uploadImage = (file, options) => {    
+const upload = (file, options) => {    
     return new Promise((resolve, reject) => {
         cloudinary.uploader.upload(
             file,
@@ -16,6 +16,29 @@ const uploadImage = (file, options) => {
             }
         );
     });
+}
+
+const uploadMultiple = async (files) => {
+    if (files) {
+        return [];
+    }
+    
+    try {
+        const uploadedImages = await Promise.all(
+            files.map(async (file, index) => {
+                const uploadedImage = await imageHandler.upload(file.path, {
+                    fileName: index.toString(),
+                    folder: imageHandler.path.forPost(req.userId.toString(), newPost._id.toString()),
+                });
+    
+                return uploadedImage.url;
+            }
+        ));
+
+        return uploadedImages;
+    } catch (err) {
+        throw err;
+    }
 }
 
 const deleteFolder = (folder) => {
@@ -39,4 +62,4 @@ const path = {
     forAvatar: (userId) => `users/${userId}/avatar/`
 }
 
-export { uploadImage, deleteFolder, path };
+export { upload, deleteFolder, uploadMultiple, path };

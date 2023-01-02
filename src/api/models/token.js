@@ -18,5 +18,26 @@ const tokenSchema = new Schema({
     }
 });
 
+tokenSchema.statics.getByValue = async (value) => {
+    try {
+        const token = await Token.findOne({ value: value });
+        if (!token) {
+            const error = new Error('Invalid token.');
+            error.statusCode = 498;
+            throw error;
+        }
+
+        if (token.expiredAt < Date.now()) {
+            const error = new Error('Token is expired.');
+            error.statusCode = 419;
+            throw error;
+        }
+
+        return token;
+    } catch (err) {
+        throw err;
+    }
+}
+
 const Token = mongoose.model('Token', tokenSchema);
 export default Token;

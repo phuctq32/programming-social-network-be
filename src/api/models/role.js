@@ -12,6 +12,17 @@ const roleSchema = new Schema({
     }
 });
 
+roleSchema.statics.getById = async (id) => {
+    const role = await Role.findById(id);
+    if (!role) {
+        const error = new Error('Role is not existing!');
+        error.statusCode = 404;
+        throw error;
+    }
+
+    return role;
+}
+
 const Role = mongoose.model('Role', roleSchema);
 export default Role;
 

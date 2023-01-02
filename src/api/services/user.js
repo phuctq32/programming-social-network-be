@@ -3,28 +3,11 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import User from '../models/user.js';
-import * as roleService from '../services/role.js';
-import * as tokenService from '../services/token.js';
+import Token from '../models/token.js';
+import Role from '../models/role.js';
 import sendMail, { get_html_reset_password, get_html_verify } from '../utils/sendMail.js'
 
 dotenv.config();
-
-const createUser = async (userData) => {
-    try {
-        const user = new User({
-            email: userData.email,
-            password: userData.hashedPassword,
-            name: userData.name,
-            role: userData.role,
-            birthday: userData.birthday,
-        });
-        await user.save();
-
-        return user;
-    } catch (err) {
-        throw err;
-    }
-}
 
 const getUsers = async () => {
     try {
@@ -36,41 +19,17 @@ const getUsers = async () => {
     }
 }
 
-const getUserByEmail = async (email, options) => {
-    try {
-        const user = await User.findOne({ email: email }).populate(options);
-        if (!user) {
-            const error = new Error('User not found.');
-            error.statusCode = 404;
-            throw err;
-        }
-
-        return user;
-    } catch (err) {
-        throw err;
-    }
-}
-
-const getUserById = async (id, options) => {
-    try {
-        const user = await User.findOne(id).populate(options);
-        if (!user) {
-            const error = new Error('User not found.');
-            error.statusCode = 404;
-            throw error;
-        }
-
-        return user;
-    } catch (err) {
-        throw err;
-    }
-}
-
 const signUp = async (userData) => {
     const { email, name, password, roleId, birthday } = userData;
 
     try {
-        const role = await roleService.getRoleById(roleId);
+        if (await User.exists({ email: email })) {
+            const error = new Error('Email already exists');
+            error.statusCode = 409;
+            throw error;
+        }
+
+        const role = await Role.getById(roleId);
         const hashedPassword = bcrypt.hashSync(password, 12);
 
         let verifiedToken;
@@ -82,8 +41,20 @@ const signUp = async (userData) => {
             verifiedToken = buffer.toString('hex');
         });
         
-        const user = await createUser(email, name, hashedPassword, role._id, birthday);
-        const token = await tokenService.createToken(verifiedToken, Date.now() + 3600000, user._id);
+        const user = new User({
+            email,
+            name,
+            password: hashedPassword,
+            role: role._id.toString(),
+            birthday: birthday,
+        });
+        await user.save();
+        const token = new Token({
+            value: verifiedToken,
+            expiredAt: Date.now() + 3600000,
+            userId: user._id.toString(),
+        });
+        await token.save();
 
         sendMail({
             from: process.env.EMAIL,
@@ -96,16 +67,16 @@ const signUp = async (userData) => {
     }
 }
 
-const verify = async (token) => {
+const verify = async (verifiedToken) => {
     try {
-        const token = await tokenService.getTokenByValue(token);
+        const token = await Token.getByValue(verifiedToken);
         
         const userId = token.userId;
-        const user = getUserById(userId);
+        const user = await User.getById(userId);
         user.isVerified = true;
         await user.save();
 
-        await tokenService.deleteManyToken(userId);
+        await Token.deleteMany({ userId: userId });
     } catch (err) { 
         throw err;
     }
@@ -113,7 +84,7 @@ const verify = async (token) => {
 
 const login = async (email, password) => {
     try {
-        const user = await getUserByEmail(email, { path: 'role'});
+        const user = await User.getByEmail(email, { path: 'role'});
 
         const isValidPassword = bcrypt.compareSync(password, user.password);
         if (!isValidPassword) {
@@ -162,8 +133,13 @@ const forgotPassword = async (email) => {
     });
 
     try {
-        const user = await getUserByEmail(email);
-        const token = tokenService.createToken(tokenString, Date.now() + 3600000, user._id);
+        const user = await User.getByEmail(email);
+        const token = new Token({
+            value: tokenString,
+            expiredAt: Date.now() + 3600000,
+            userId: user._id.toString(),
+        });
+        await token.save();
 
         sendMail({
             from: process.env.EMAIL,
@@ -180,14 +156,14 @@ const forgotPassword = async (email) => {
 
 const resetPassword = async (resetToken, newPassword) => {
     try {
-        const token = await tokenService.getTokenByValue(resetToken);
-        const user = await getUserById(token.userId);
+        const token = await Token.getByValue(resetToken);
+        const user = await User.getById(token.userId);
 
         const hashedPassword = bcrypt.hashSync(newPassword);
         user.password = hashedPassword;
         await user.save();
 
-        await tokenService.deleteManyToken(userId);
+        await Token.deleteMany({ userId: userId });
     } catch (err) {
         throw err;
     }
@@ -200,5 +176,4 @@ export {
     forgotPassword,
     resetPassword,
     getUsers,
-    getUserById
 };

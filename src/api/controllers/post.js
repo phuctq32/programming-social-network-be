@@ -14,7 +14,7 @@ export const getPost = async (req, res, next) => {
     const postId = req.params.postId;
 
     try {
-        const post = await postService.getPostById(postId);
+        const post = await postService.getPost(postId);
 
         res.status(200).json(post);
     } catch (err) {

@@ -1,8 +1,7 @@
 import Post from '../models/post.js';
-import * as categoryService from '../services/category.js';
-import * as tagService from '../services/tag.js';
-import * as imageService from '../services/image.js';
-import * as userService from '../services/user.js';
+import Category from '../models/category.js';
+import Tag from '../models/tag.js';
+import User from '../models/user.js';
 import * as imageHandler from '../utils/imageHandler.js';
 
 const getPosts = async (filter) => {
@@ -19,19 +18,9 @@ const getPosts = async (filter) => {
     }
 }
 
-const getPostById = async (id) => {
+const getPost = async (id) => {
     try {
-        const post = await Post.findById(postId)
-            .populate('category')
-            .populate('tag', 'name')
-            .populate('creator', 'name');
-        if (!post) {
-            const error = new Error('Post not found.');
-            error.statusCode = 404;
-            throw error;
-        }
-
-        return post;
+        return await Post.getById(id);
     } catch (err) {
         throw err;
     }
@@ -39,8 +28,8 @@ const getPostById = async (id) => {
 
 const createPost = async ({ title, content, tagId, categoryId, userId, files }) => {
     try {
-        const category = await categoryService.getCategoryById(categoryId);
-        const tag = await tagService.getTagById(tagId);
+        const category = await Category.getById(categoryId);
+        const tag = await Tag.getById(tagId);
 
         const post = new Post({
             title,
@@ -51,7 +40,7 @@ const createPost = async ({ title, content, tagId, categoryId, userId, files }) 
         });
 
         // upload images
-        const uploadedImages = await imageService.uploadMultipleFiles(files);
+        const uploadedImages = await imageHandler.uploadMultiple(files);
         post.images = uploadedImages;
     
         await post.save();
@@ -64,7 +53,7 @@ const createPost = async ({ title, content, tagId, categoryId, userId, files }) 
 
 const updatePost = async ({ postId, title, content, tagId, categoryId, files }) => {
     try {
-        const editedPost = await getPostById(postId);
+        const editedPost = await Post.getById(postId);
 
         // Check if user is post's creator
         if (userId.toString() !== editedPost.creator._id.toString()) {
@@ -74,15 +63,15 @@ const updatePost = async ({ postId, title, content, tagId, categoryId, files }) 
         }
 
         // Check category and tag are existing
-        const category = await categoryService.getCategoryById(categoryId);
-        const tag = await tagService.getTagById(tagId);
+        const category = await Category.getById(categoryId);
+        const tag = await Tag.getById(tagId);
 
         // Delete old images
         if (editedPost.images.length > 0) {
             await imageHandler.deleteFolder(imageHandler.path.forPost(req.userId, editedPost._id.toString()));
         }
         
-        const uploadedImages = await imageService.uploadMultipleFiles(files);
+        const uploadedImages = await imageHandler.uploadMultiple(files);
             
         editedPost.title = title;
         editedPost.content = content;
@@ -99,8 +88,8 @@ const updatePost = async ({ postId, title, content, tagId, categoryId, files }) 
 
 const deleteSavedPost = async (postId, userId) => {
     try {
-        const user = await userService.getUserById(userId);
-        const post = await getPostById(postId);
+        const user = await User.getById(userId);
+        const post = await Post.getById(postId);
         const updatedSavedPosts = user.savedPosts;
             if (updatedSavedPosts.includes(post._id)) {
                 user.savedPosts = updatedSavedPosts.filter(p => p._id.toString() !== post._id.toString());
@@ -113,7 +102,7 @@ const deleteSavedPost = async (postId, userId) => {
 
 const deletePost = async (postId, userId) => {
     try {
-        const post = await getPostById(postId);
+        const post = await Post.getById(postId);
 
         // Check if user is post's creator
         if (userId.toString() !== post.creator.toString()) {
@@ -128,7 +117,7 @@ const deletePost = async (postId, userId) => {
         }
 
         // Delete post in savedPost of all users
-        const allUsers = await userService.getUsers();
+        const allUsers = await User.find();
         for (const user of allUsers) {
             await deleteSavedPost(postId, user._id.toString());
         }
@@ -141,7 +130,7 @@ const deletePost = async (postId, userId) => {
 
 const likePost = async (postId, userId) => {
     try {
-        const post = await getPostById(postId);
+        const post = await Post.getById(postId);
 
         const updatedLikes = post.likes;
         if (!updatedLikes.includes(userId)) {
@@ -160,7 +149,7 @@ const likePost = async (postId, userId) => {
 
 const unlikePost = async (postId, userId) => {
     try {
-        const post = await getPostById(postId);
+        const post = await Post.getById(postId);
 
         const updatedLikes = post.likes;
         if (updatedLikes.includes(userId)) {
@@ -179,7 +168,7 @@ const unlikePost = async (postId, userId) => {
 
 const viewPost = async (postId, userId) => {
     try {
-        const post = await getPostById(postId);
+        const post = await Post.getById(postId);
 
         const updatedViews = post.Views;
         if (!updatedViews.includes(userId)) {
@@ -196,7 +185,7 @@ const viewPost = async (postId, userId) => {
 
 export {
     getPosts,
-    getPostById,
+    getPost,
     createPost,
     updatePost,
     deletePost,

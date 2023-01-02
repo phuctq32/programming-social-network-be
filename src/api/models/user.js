@@ -64,5 +64,37 @@ const userSchema = new Schema({
     ]
 }, { timestamps: true });
 
+userSchema.statics.getById = async (id, options) => {
+    try {
+        const user = await User.findOne(id).populate(options);
+        if (!user) {
+            const error = new Error('User not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+
+userSchema.statics.getByEmail = async (email, options) => {
+    try {
+        const user = await User.findOne({ email: email }).populate(options);
+        if (!user) {
+            const error = new Error('User not found.');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+
+
+
 const User = mongoose.model('User', userSchema);
 export default User;

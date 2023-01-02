@@ -2,6 +2,12 @@ import Category from '../models/category.js';
 
 const createCategory = async (name) => {
     try {
+        if (!(await Category.exists({ name: name }))) {
+            const error = new Error('Category already exists!');
+            error.statusCode = 409;
+            throw error;
+        }
+
         const category = new Category({ name: name });
         await category.save();
 
@@ -21,23 +27,7 @@ const getCategories = async () => {
     }
 }
 
-const getCategoryById = async (id) => {
-    try {
-        const category = await Category.findById(id);
-        if (!category) {
-            const error = new Error('Category not found.');
-            error.statusCode = 404;
-            throw error;
-        }
-
-        return category;
-    } catch (err) {
-        throw err;
-    }
-}
-
 export {
     createCategory,
-    getCategories,
-    getCategoryById
+    getCategories
 };

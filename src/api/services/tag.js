@@ -1,24 +1,9 @@
+import Category from '../models/category.js';
 import Tag from '../models/tag.js';
-import * as categoryService from '../services/category.js';
-
-const getTagById = async (id) => {
-    try {
-        const tag = await Tag.findById(id);
-        if (!tag) {
-            const error = new Error('Tag not found.');
-            error.statusCode = 404;
-            throw error;
-        }
-
-        return tag;
-    } catch (err) {
-        throw err;
-    }
-}
 
 const getTagsByCategoryId = async (categoryId) => {
     try {
-        const category = await categoryService.getCategoryById(categoryId);
+        const category = await Category.getById(categoryId);
 
         const tags = await Tag.find({ category: category });
 
@@ -30,7 +15,7 @@ const getTagsByCategoryId = async (categoryId) => {
 
 const createTag = async (name, categoryId) => {
     try {
-        const category = await categoryService.getCategoryById(categoryId);
+        Category.getById(categoryId);
 
         // check if the tag is existing
         const existingTag = await Tag.findOne({
@@ -56,7 +41,6 @@ const createTag = async (name, categoryId) => {
 }
 
 export {
-    getTagById,
     getTagsByCategoryId,
     createTag
 };
