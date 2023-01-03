@@ -13,14 +13,14 @@ const commentSchema = new Schema({
             ref: 'Comment'
         }
     ],
-    totalLikes: {
+    likes: {
         type: Number,
         default: 0
     },
     level: {
         type: Number,
         min: [1, 'The min level of comment is 1'],
-        max: [3, 'The max level of comment is 3']
+        max: [2, 'The max level of comment is 2']
     },
     creator: {
         type: Schema.Types.ObjectId,
