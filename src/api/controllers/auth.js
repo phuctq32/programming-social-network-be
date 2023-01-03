@@ -49,7 +49,7 @@ export const forgotPassword = async (req, res, next) => {
 
 export const resetPassword = async (req, res, next) => {
     try {
-        await userService.resetPassword(req.body.password, req.params.token);
+        await userService.resetPassword(req.params.token, req.body.password);
 
         res.status(200).json({
             message: 'Reset password successfully!'

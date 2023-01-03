@@ -20,7 +20,9 @@ const tokenSchema = new Schema({
 
 tokenSchema.statics.getByValue = async (value) => {
     try {
+        console.log(value);
         const token = await Token.findOne({ value: value });
+        console.log(token);
         if (!token) {
             const error = new Error('Invalid token.');
             error.statusCode = 498;

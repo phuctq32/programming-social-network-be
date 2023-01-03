@@ -143,7 +143,7 @@ const forgotPassword = async (email) => {
 
         sendMail({
             from: process.env.EMAIL,
-            to: req.body.email,
+            to: email,
             subject: 'Reset Password',
             html: get_html_reset_password(`http://localhost:8080/api/reset-password/${token.value}`)
         });
