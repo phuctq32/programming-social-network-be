@@ -28,7 +28,7 @@ export const createPost = async (req, res, next) => {
         content: req.body.content,
         categoryId: req.body.categoryId,
         tagId: req.body.tagId,
-        userId: req.body.userId,
+        userId: req.userId,
         files: req.files
     };
     
@@ -48,7 +48,7 @@ export const editPost =  async (req, res, next) => {
         content: req.body.content,
         categoryId: req.body.categoryId,
         tagId: req.body.tagId,
-        userId: req.body.userId,
+        userId: req.userId,
         files: req.files
     };
 
@@ -96,6 +96,26 @@ export const view = async (req, res, next) => {
         const updatedPost = await postService.likePost(req.params.postId, req.userId);
 
         res.status(200).json({ updatedPost });
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const save = async (req, res, next) => {
+    try {
+        const updatedUser = await postService.savePost(req.params.postId, req.userId);
+
+        res.status(200).json({ updatedUser });
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const unsave = async (req, res, next) => {
+    try {
+        const updatedUser = await postService.deleteSavedPost(req.params.postId, req.userId);
+
+        res.status(200).json({ updatedUser });
     } catch (err) {
         next(err);
     }

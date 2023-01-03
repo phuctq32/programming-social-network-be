@@ -36,4 +36,8 @@ router.put('/posts/:postId/unlike', isAuth, postController.unlike);
 
 router.put('/posts/:postId/view', isAuth, postController.view);
 
+router.put('/posts/:postId/save', isAuth, postController.save);
+
+router.put('/posts/:postId/unsave', isAuth, postController.unsave);
+
 export default router;

@@ -26,8 +26,9 @@ const getPost = async (id) => {
     }
 }
 
-const createPost = async ({ title, content, tagId, categoryId, userId, files }) => {
+const createPost = async ({ title, content, tagId, categoryId, files, userId }) => {
     try {
+        await User.getById(userId);
         const category = await Category.getById(categoryId);
         const tag = await Tag.getById(tagId);
 
@@ -51,9 +52,10 @@ const createPost = async ({ title, content, tagId, categoryId, userId, files }) 
     }
 }
 
-const updatePost = async ({ postId, title, content, tagId, categoryId, files }) => {
+const updatePost = async ({ postId, title, content, tagId, categoryId, files, userId }) => {
     try {
         const editedPost = await Post.getById(postId);
+        await User.getById(userId);
 
         // Check if user is post's creator
         if (userId.toString() !== editedPost.creator._id.toString()) {
@@ -91,12 +93,14 @@ const deleteSavedPost = async (postId, userId) => {
         const user = await User.getById(userId);
         const post = await Post.getById(postId);
         const updatedSavedPosts = user.savedPosts;
-            if (updatedSavedPosts.includes(post._id)) {
-                user.savedPosts = updatedSavedPosts.filter(p => p._id.toString() !== post._id.toString());
-            }
-        await user.save();
-    } catch (err) {
+        if (updatedSavedPosts.includes(post._id)) {
+            user.savedPosts = updatedSavedPosts.filter(p => p._id.toString() !== post._id.toString());
+            await user.save();
+        }
 
+        return user;
+    } catch (err) {
+        throw err;
     }
 }
 
@@ -169,15 +173,32 @@ const unlikePost = async (postId, userId) => {
 const viewPost = async (postId, userId) => {
     try {
         const post = await Post.getById(postId);
+        const user = await User.getById(userId);
 
         const updatedViews = post.Views;
-        if (!updatedViews.includes(userId)) {
-            updatedViews.push(userId);
+        if (!updatedViews.includes(user._id.toString())) {
+            updatedViews.push(user._id.toString());
             post.views = updatedViews;
             await post.save();
         }
 
         return post;
+    } catch (err) {
+        throw err;
+    }
+}
+
+const savePost = async (postId, userId) => {
+    try {
+        const post = await Post.getById(postId);
+        const user = await User.getById(userId);
+
+        if (!user.savedPosts.includes(post._id.toString())) {
+            user.savedPosts.push(post._id.toString());
+            await user.save();
+        }
+
+        return user;
     } catch (err) {
         throw err;
     }
@@ -192,4 +213,6 @@ export {
     likePost,
     unlikePost,
     viewPost,
+    savePost,
+    deleteSavedPost
 };
