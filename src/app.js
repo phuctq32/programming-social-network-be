@@ -1,10 +1,18 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
 import db from './configs/database.js';
 import indexRoutes from './api/routes/index.js';
 import errorHandler from './api/middlewares/errorHandler.js';
 
 const app = express();
+
+app.use(helmet());
+app.use(compression({
+    level: 6,
+    threshold: 10 * 1000,
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ limit: '50mb', extended: false }));

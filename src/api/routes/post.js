@@ -1,32 +1,19 @@
 import { Router } from "express";
-import { body } from "express-validator";
 import * as postController from '../controllers/post.js';
 import isAuth from "../middlewares/isAuth.js";
 import validationErrorHandler from "../middlewares/validationErrorHandler.js";
 import multer from "../utils/multer.js";
+import { postValidations } from "../validations/post.js";
 
 const router = Router();
-
-const postValidation = [
-    body('title')
-        .trim()
-        .isLength({ min: 4 }).withMessage('Title must be at least 4 characters!'),
-    body('content')
-        .trim()
-        .isLength({ min: 6 }).withMessage('Content must be at least 6 characters!'),
-    body('categoryId')
-        .isMongoId(),
-    body('tagId')
-        .isMongoId()
-];
 
 router.get('/posts', postController.getPosts);
 
 router.get('/posts/:postId', postController.getPost);
 
-router.post('/post', isAuth, multer.array('images'), postValidation, validationErrorHandler, postController.createPost);
+router.post('/post', isAuth, multer.array('images'), postValidations, validationErrorHandler, postController.createPost);
 
-router.put('/posts/:postId/edit', isAuth, multer.array('images'), postValidation, validationErrorHandler, postController.editPost);
+router.put('/posts/:postId/edit', isAuth, multer.array('images'), postValidations, validationErrorHandler, postController.editPost);
 
 router.delete('/posts/:postId/delete', isAuth, postController.deletePost);
 

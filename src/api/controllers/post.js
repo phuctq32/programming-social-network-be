@@ -16,7 +16,7 @@ export const getPost = async (req, res, next) => {
     try {
         const post = await postService.getPost(postId);
 
-        res.status(200).json(post);
+        res.status(200).json({ post });
     } catch (err) {
         next(err);
     }

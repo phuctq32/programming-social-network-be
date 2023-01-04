@@ -53,7 +53,7 @@ const postSchema = new Schema({
 
 postSchema.statics.getById = async (id) => {
     try {
-        const post = await Post.findById(postId)
+        const post = await Post.findById(id)
             .populate('category')
             .populate('tag', 'name')
             .populate('creator', 'name');
