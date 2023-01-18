@@ -7,26 +7,34 @@ const commentSchema = new Schema({
         type: String,
         required: true,
     },
-    replies: [
+    post: {
+        type: Schema.Types.ObjectId,
+        ref: 'Post',
+        required: true,
+    },
+    parentComment: {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment',
+        required: false
+    },
+    votes: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Comment'
+            ref: 'User',
         }
     ],
-    votes: {
-        type: Number,
-        default: 0
-    },
-    level: {
-        type: Number,
-        min: [1, 'The min level of comment is 1'],
-        max: [2, 'The max level of comment is 2']
-    },
-    creator: {
+    author: {
         type: Schema.Types.ObjectId,
         ref: 'User'
     }
 }, { timestamps: true });
+
+commentSchema.statics.getAllCommentsByPostId = async (postId) => {
+    result = await Comment.find({ post: postId });
+    if (!parentComment) {
+        return 
+    }
+}
 
 const Comment = mongoose.model('Comment', commentSchema);
 export default Comment;

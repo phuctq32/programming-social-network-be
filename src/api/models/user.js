@@ -66,7 +66,7 @@ const userSchema = new Schema({
 
 userSchema.statics.getById = async (id, options) => {
     try {
-        const user = await User.findOne(id).populate(options);
+        const user = await User.findById(id).populate(options);
         if (!user) {
             const error = new Error('User not found.');
             error.statusCode = 404;
