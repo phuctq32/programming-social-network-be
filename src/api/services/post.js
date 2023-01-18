@@ -41,7 +41,7 @@ const createPost = async ({ title, content, tagId, categoryId, files, userId }) 
         });
 
         // upload images
-        const uploadedImages = await imageHandler.uploadMultiple(files);
+        const uploadedImages = await imageHandler.uploadMultiple(userId, post._id, files);
         post.images = uploadedImages;
     
         await post.save();
@@ -73,7 +73,7 @@ const updatePost = async ({ postId, title, content, tagId, categoryId, files, us
             await imageHandler.deleteFolder(imageHandler.path.forPost(req.userId, editedPost._id.toString()));
         }
         
-        const uploadedImages = await imageHandler.uploadMultiple(files);
+        const uploadedImages = await imageHandler.uploadMultiple(userId, editedPost._id, files);
             
         editedPost.title = title;
         editedPost.content = content;

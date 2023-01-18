@@ -18,17 +18,17 @@ const upload = (file, options) => {
     });
 }
 
-const uploadMultiple = async (files) => {
-    if (files) {
+const uploadMultiple = async (userId, postId, files) => {
+    if (!files) {
         return [];
     }
     
     try {
         const uploadedImages = await Promise.all(
             files.map(async (file, index) => {
-                const uploadedImage = await imageHandler.upload(file.path, {
+                const uploadedImage = await upload(file.path, {
                     fileName: index.toString(),
-                    folder: imageHandler.path.forPost(req.userId.toString(), newPost._id.toString()),
+                    folder: path.forPost(userId.toString(), postId.toString()),
                 });
     
                 return uploadedImage.url;
@@ -62,4 +62,4 @@ const path = {
     forAvatar: (userId) => `users/${userId}/avatar/`
 }
 
-export { upload, deleteFolder, uploadMultiple, path };
+export { upload, deleteFolder, uploadMultiple };
