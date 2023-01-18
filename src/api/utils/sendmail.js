@@ -45,6 +45,7 @@ const createTransporter = async () => {
     return transporter;
 }
 
+
 const sendMail = async (emailOptions) => {
     let emailTransporter = await createTransporter();
     await emailTransporter.sendMail(emailOptions);
