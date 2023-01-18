@@ -13,7 +13,7 @@ const commentSchema = new Schema({
             ref: 'Comment'
         }
     ],
-    likes: {
+    votes: {
         type: Number,
         default: 0
     },
