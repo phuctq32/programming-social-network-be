@@ -65,21 +65,35 @@ const updatePost = async ({ postId, title, content, tagId, categoryId, files, us
         }
 
         // Check category and tag are existing
-        const category = await Category.getById(categoryId);
-        const tag = await Tag.getById(tagId);
+        if (categoryId) {
+            const category = await Category.getById(categoryId);
+            editedPost.category = category._id;
+        }
 
-        // Delete old images
-        if (editedPost.images.length > 0) {
-            await imageHandler.deleteFolder(imageHandler.path.forPost(req.userId, editedPost._id.toString()));
+        if (tagId) {
+            const tag = await Tag.getById(tagId);
+            editedPost.category = category._id;
+        }
+
+        if (files) {
+            // Delete old images
+            if (editedPost.images.length > 0) {
+                await imageHandler.deleteFolder(imageHandler.path.forPost(userId, editedPost._id.toString()));
+            }
+
+            const uploadedImages = await imageHandler.uploadMultiple(userId, editedPost._id, files);
+            editedPost.images = uploadedImages;
+        }
+
+        if (title) {
+            editedPost.title = title;
+        }
+            
+        if (content) {
+            editedPost.content = content;
         }
         
-        const uploadedImages = await imageHandler.uploadMultiple(userId, editedPost._id, files);
-            
-        editedPost.title = title;
-        editedPost.content = content;
-        editedPost.tag = tag._id;
-        editedPost.category = category._id;
-        editedPost.images = uploadedImages;
+        
         await editedPost.save();
 
         return editedPost;
