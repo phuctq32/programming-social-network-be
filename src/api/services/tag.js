@@ -29,7 +29,7 @@ const createTag = async (name, categoryId) => {
         }
 
         const tag = new Tag({
-            name: tagName,
+            name: name,
             category: categoryId
         });
         await tag.save();
