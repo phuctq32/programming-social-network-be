@@ -123,7 +123,7 @@ const deletePost = async (postId, userId) => {
         const post = await Post.getById(postId);
 
         // Check if user is post's creator
-        if (userId.toString() !== post.creator.toString()) {
+        if (userId.toString() !== post.creator._id.toString()) {
             const error = new Error('User is not the creator');
             error.statusCode = 403;
             throw error;

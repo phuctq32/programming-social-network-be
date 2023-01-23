@@ -62,4 +62,4 @@ const path = {
     forAvatar: (userId) => `users/${userId}/avatar/`
 }
 
-export { upload, deleteFolder, uploadMultiple };
+export { upload, deleteFolder, uploadMultiple, path };
