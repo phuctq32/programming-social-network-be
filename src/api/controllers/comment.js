@@ -17,3 +17,13 @@ export const createComment = async (req, res, next) => {
         next(err);
     }
 }
+
+export const getCommentsByPostId = async (req, res, next) => {
+    try {
+        const comments = await commentService.getCommentsByPostId(req.params.postId);
+
+        res.status(200).json({ comments });
+    } catch (err) {
+        next(err);
+    }
+}

@@ -25,6 +25,26 @@ const createComment = async ({ userId, postId, parentCommentId, content }) => {
     }
 }
 
+const getCommentsByPostId = async (postId) => {
+    try {
+        const comments = await Comment
+            .find({ post: postId, parentComment: null })
+            .populate('author', 'name -_id')
+            .populate({
+                path: 'replies',
+                populate: {
+                    path: 'author',
+                    select: 'name -_id',
+                }
+            });
+
+        return comments;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export {
-    createComment
+    createComment, 
+    getCommentsByPostId
 };

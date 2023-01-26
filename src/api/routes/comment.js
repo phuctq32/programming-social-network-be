@@ -4,12 +4,12 @@ import isAuth from "../middlewares/isAuth.js";
 
 const router = Router();
 
-router.get('/:postId/comments');
+router.get('/posts/:postId/comments', commentController.getCommentsByPostId);
 
-router.post('/:postId', isAuth, commentController.createComment);
+router.post('/posts/:postId', isAuth, commentController.createComment);
 
-router.post('/:postId/:commentId');
+router.post('/posts/:postId/:commentId');
 
-router.delete('/:postId/:commentId');
+router.delete('/posts/:postId/:commentId');
 
 export default router;
