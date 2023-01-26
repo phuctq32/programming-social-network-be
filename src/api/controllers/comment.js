@@ -27,3 +27,13 @@ export const getCommentsByPostId = async (req, res, next) => {
         next(err);
     }
 }
+
+export const deleteComment = async (req, res, next) => {
+    try {
+        await commentService.deleteComment(req.params.postId, req.params.commentId, req.userId);
+
+        res.status(204).json({ message: 'Comment deleted successfully' });
+    } catch (err) {
+        next(err);
+    }
+}

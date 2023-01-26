@@ -44,7 +44,27 @@ const getCommentsByPostId = async (postId) => {
     }
 }
 
+const deleteComment = async (postId, commentId, userId) => {
+    try {
+        const post = await Post.getById(postId);
+        const comment = await Comment.getById(commentId);
+        const user = await User.getById(userId);
+
+        if (user._id.toString() !== comment.author.toString()) {
+            const error = new Error("User is not the comment's author");
+            error.statusCode = 403;
+            throw error;
+        }
+
+        await Comment.deleteMany({ post: post._id, parentComment: comment._id });
+        await Comment.findByIdAndDelete(comment._id);
+    } catch (err) {
+        throw err;
+    }
+}
+
 export {
     createComment, 
-    getCommentsByPostId
+    getCommentsByPostId,
+    deleteComment
 };
