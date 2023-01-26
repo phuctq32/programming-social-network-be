@@ -43,5 +43,20 @@ commentSchema.virtual('replies', {
     foreignField: 'parentComment',
 });
 
+commentSchema.statics.getById = async (id) => {
+    try {
+        const comment = await Comment.findById(id);
+        if (!comment) {
+            const error = new Error('Comment not found');
+            error.statusCode = 404;
+            throw error;
+        }
+
+        return comment;
+    } catch (err) {
+        throw err;
+    }
+}
+
 const Comment = mongoose.model('Comment', commentSchema);
 export default Comment;
