@@ -75,7 +75,8 @@ const updatePost = async ({ postId, title, content, tagId, categoryId, files, us
             editedPost.category = tag._id;
         }
 
-        if (files) {
+        if (Array.from(files).length > 0) {
+            
             // Delete old images
             if (editedPost.images.length > 0) {
                 await imageHandler.deleteFolder(imageHandler.path.forPost(userId, editedPost._id.toString()));
