@@ -7,8 +7,8 @@ const router = Router();
 
 router.get('/admin/get-all-members', isAuth, isAdmin, adminController.getAllMembers);
 
-router.put('/admin/ban', isAuth, isAdmin);
-router.put('/admin/unban', isAuth, isAdmin);
+router.put('/admin/ban', isAuth, isAdmin, adminController.toggleBan);
+router.put('/admin/unban', isAuth, isAdmin, adminController.toggleBan);
 
 
 

@@ -15,6 +15,25 @@ const getAllMembers = async () => {
     }
 }
 
+const toggleBan = async (userId) => {
+    try {
+        const user = await User.getById(userId);
+
+        if (!user.isBanned) {
+            user.isBanned = true;
+        } else {
+            user.isBanned = false;
+        }
+
+        await user.save();
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export {
-    getAllMembers
+    getAllMembers,
+    toggleBan
 }
