@@ -47,9 +47,32 @@ async function getCommentsByParent(postId, parentComment = null) {
 const getCommentsByPostId = async (postId) => {
     try {
         const comments = await getCommentsByParent(postId);
-        console.log(comments);
-
         return comments;
+    } catch (err) {
+        throw err;
+    }
+};
+
+const destroyOneComment = async (commentId, userId) => {
+    try {
+        const comment = await Comment.findById(commentId);
+
+        if (!comment) {
+            const error = new Error('Cannot find comment');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        // Check if user is post's creator
+        if (userId.toString() !== comment.author._id.toString()) {
+            const error = new Error('User is not the creator');
+            error.statusCode = 403;
+            throw error;
+        }
+
+        await Comment.findByIdAndDelete(commentId);
+
+        return { success: true };
     } catch (err) {
         throw err;
     }
@@ -65,4 +88,4 @@ const destroyAllComment = async () => {
     }
 };
 
-export { createComment, getCommentsByPostId, destroyAllComment };
+export { createComment, getCommentsByPostId, destroyAllComment, destroyOneComment };

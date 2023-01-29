@@ -11,7 +11,7 @@ router.post('/comment', isAuth, commentController.createComment);
 
 router.put('/comment/:commentId');
 
-router.delete('/comment/:commentId');
+router.delete('/comment/:commentId', isAuth, commentController.destroyOneComment);
 router.delete('/comment', commentController.destroyAllComment);
 
 export default router;

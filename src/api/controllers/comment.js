@@ -28,6 +28,16 @@ export const getCommentsByPostId = async (req, res, next) => {
     }
 };
 
+export const destroyOneComment = async (req, res, next) => {
+    try {
+        const result = await commentService.destroyOneComment(req.params.commentId, req.userId);
+
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const destroyAllComment = async (req, res, next) => {
     try {
         const result = await commentService.destroyAllComment();
