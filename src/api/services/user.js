@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/user.js';
-
+import * as imageHandler from '../utils/imageHandler.js';
+import { DEFAULT_AVATAR_URL } from '../../configs/constants.js';
 
 const changePassword = async (userId, currentPassword, newPassword) => {
     try {
@@ -43,6 +44,40 @@ const getUser = async (userId) => {
     }
 }
 
+const updateUser = async (userId, { name, birthday, avatar }) => {
+    try {
+        const user = await User.getById(userId);
+
+        if (name) {
+            user.name = name;
+        }
+
+        if (birthday) {
+            user.birthday = birthday;
+        }
+
+        console.log(avatar);
+        if (avatar) {
+            // Delete current avatar
+            if (user.avatar !== DEFAULT_AVATAR_URL) {
+                await imageHandler.deleteFolder(imageHandler.path.forAvatar(user._id.toString()));
+            }
+
+            const uploadedImage = await imageHandler.upload(avatar.path, {
+                fileName: 'avatar',
+                folder: imageHandler.path.forAvatar(user._id.toString()),
+            });
+            user.avatar = uploadedImage.url;
+        }
+
+        await user.save();
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+
 const toggleFollow = async (userId, followingId) => {
     try {
         const user = await User.getById(userId);
@@ -65,5 +100,6 @@ const toggleFollow = async (userId, followingId) => {
 export {
     changePassword,
     getUser,
-    toggleFollow
+    toggleFollow,
+    updateUser
 };

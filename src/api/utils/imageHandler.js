@@ -59,7 +59,7 @@ const deleteFolder = (folder) => {
 
 const path = {
     forPost: (userId, postId) => `users/${userId}/posts/${postId}`,
-    forAvatar: (userId) => `users/${userId}/avatar/`
+    forAvatar: (userId) => `users/${userId}/avatar`
 }
 
 export { upload, deleteFolder, uploadMultiple, path };

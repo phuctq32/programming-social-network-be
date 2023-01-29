@@ -20,6 +20,20 @@ export const getUser = async (req, res, next) => {
     }
 }
 
+export const editUser = async (req, res, next) => {
+    try {
+        const user = await userService.updateUser(req.userId, {
+            name: req.body.name,
+            birthday: req.body.birthday,
+            avatar: req.file
+        });
+
+        res.status(200).json({ user });
+    } catch (err) {
+        next(err);
+    }
+}
+
 export const toggleFollow = async (req, res, next) => {
     try {
         const user = await userService.toggleFollow(req.userId, req.params.userId);
