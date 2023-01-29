@@ -53,17 +53,32 @@ const getCommentsByPostId = async (postId) => {
     }
 };
 
-const destroyOneComment = async (commentId, userId) => {
+const updateComment = async (commentId, userId, commentData) => {
     try {
-        const comment = await Comment.findById(commentId);
+        const editedComment = await Comment.getById(commentId);
 
-        if (!comment) {
-            const error = new Error('Cannot find comment');
-            error.statusCode = 401;
+        // Check if user is comment's author
+        if (userId.toString() !== editedComment.author._id.toString()) {
+            console.log(userId.toString(), editedComment.author._id.toString());
+            const error = new Error('User is not the creator');
+            error.statusCode = 403;
             throw error;
         }
 
-        // Check if user is post's creator
+        editedComment.content = commentData.content;
+        await editedComment.save();
+
+        return editedComment;
+    } catch (err) {
+        throw err;
+    }
+}
+
+const destroyOneComment = async (commentId, userId) => {
+    try {
+        const comment = await Comment.getById(commentId);
+
+        // Check if user is comment's author
         if (userId.toString() !== comment.author._id.toString()) {
             const error = new Error('User is not the creator');
             error.statusCode = 403;
@@ -113,4 +128,11 @@ const toggleLikeComment = async (commentId, userId) => {
     }
 };
 
-export { createComment, getCommentsByPostId, destroyAllComment, destroyOneComment, toggleLikeComment };
+export { 
+    createComment,
+    getCommentsByPostId,
+    updateComment,
+    destroyAllComment,
+    destroyOneComment,
+    toggleLikeComment
+};
