@@ -124,3 +124,23 @@ export const unsave = async (req, res, next) => {
         next(err);
     }
 }
+
+export const getSavedPosts = async (req, res, next) => {
+    try {
+        const savedPosts = await postService.getSavedPosts(req.userId);
+
+        res.status(200).json({ savedPosts });
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const getFollowingPosts = async (req, res, next) => {
+    try {
+        const followingPosts = await postService.getFollowingPosts(req.userId);
+
+        res.status(200).json({ followingPosts });
+    } catch (err) {
+        next(err);
+    }
+}

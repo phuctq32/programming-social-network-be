@@ -221,6 +221,41 @@ const savePost = async (postId, userId) => {
     }
 }
 
+const getSavedPosts = async (userId) => {
+    try {
+        const user = await User.getById(userId);
+
+        const savedPosts = await Post.find({ creator: user._id.toString() })
+            .populate('category')
+            .populate('tag', 'name')
+            .populate('creator', 'name')
+            .sort({ createdAt: -1 });
+
+        return savedPosts;
+    } catch (err) {
+        throw err;
+    }
+}
+
+const getFollowingPosts = async (userId) => {
+    try {
+        const user = await User.getById(userId);
+
+        const following = user.following;
+        const followingPosts = await Post.find({ 
+            creator: { "$in": following }
+        })
+        .populate('category')
+        .populate('tag', 'name')
+        .populate('creator', 'name')
+        .sort({ createdAt: -1 });
+
+        return followingPosts;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export {
     getPosts,
     getPost,
@@ -231,5 +266,7 @@ export {
     unlikePost,
     viewPost,
     savePost,
-    deleteSavedPost
+    deleteSavedPost,
+    getSavedPosts,
+    getFollowingPosts
 };

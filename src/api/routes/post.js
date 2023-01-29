@@ -11,6 +11,10 @@ router.get('/posts', postController.getPosts);
 
 router.get('/posts/:postId', postController.getPost);
 
+router.get('/posts/saved/posts', isAuth, postController.getSavedPosts);
+
+router.get('/posts/following/posts', isAuth, postController.getFollowingPosts);
+
 router.post('/post', isAuth, multer.array('images'), postValidations, validationErrorHandler, postController.createPost);
 
 router.put('/posts/:postId/edit', isAuth, multer.array('images'), postValidations, validationErrorHandler, postController.editPost);
