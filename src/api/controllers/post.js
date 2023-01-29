@@ -2,7 +2,11 @@ import * as postService from '../services/post.js';
 
 export const getPosts = async (req, res, next) => {
     try {
-        const posts = await postService.getPosts();
+        const options = {
+            limit: +req.query.limit,
+            page: +req.query.page
+        };
+        const posts = await postService.getPosts(options);
 
         res.status(200).json({ posts });
     } catch (err) {

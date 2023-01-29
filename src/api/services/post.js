@@ -4,9 +4,11 @@ import Tag from '../models/tag.js';
 import User from '../models/user.js';
 import * as imageHandler from '../utils/imageHandler.js';
 
-const getPosts = async (filter) => {
+const getPosts = async (options) => {
     try {
         const posts = await Post.find()
+            .limit(options.limit)
+            .skip((options.page - 1) * options.limit)
             .populate('category')
             .populate('tag', 'name')
             .populate('creator', 'name')
