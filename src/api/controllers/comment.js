@@ -28,19 +28,6 @@ export const getCommentsByPostId = async (req, res, next) => {
     }
 };
 
-export const editComment = async (req, res, next) => {
-    try {
-        const cmtData = {
-            content: req.body.content    
-        };
-        const comment = await commentService.updateComment(req.params.commentId, req.userId, cmtData);
-
-        res.status(200).json({ comment });
-    } catch (err) {
-        next(err);
-    }
-}
-
 export const destroyOneComment = async (req, res, next) => {
     try {
         const result = await commentService.destroyOneComment(req.params.commentId, req.userId);
@@ -64,6 +51,16 @@ export const destroyAllComment = async (req, res, next) => {
 export const toggleLikeComment = async (req, res, next) => {
     try {
         const comment = await commentService.toggleLikeComment(req.params.commentId, req.userId);
+
+        res.status(200).json(comment);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const editComment = async (req, res, next) => {
+    try {
+        const comment = await commentService.editComment(req.params.commentId, req.body, req.userId);
 
         res.status(200).json(comment);
     } catch (err) {
