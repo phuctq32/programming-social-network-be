@@ -19,7 +19,7 @@ const upload = (file, options) => {
 }
 
 const uploadMultiple = async (userId, postId, files) => {
-    if (!files) {
+    if (Array.from(files).length === 0) {
         return [];
     }
     
