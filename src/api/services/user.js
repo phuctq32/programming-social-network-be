@@ -29,6 +29,21 @@ const changePassword = async (userId, currentPassword, newPassword) => {
     }
 }
 
+const getUser = async (userId) => {
+    try {
+        const user = await User.getById(
+            userId, 
+            'email name avatar role birthday lastLoginAt -_id',
+            { path: 'role', select: 'name -_id' }
+        );
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export {
-    changePassword
+    changePassword,
+    getUser,
 };

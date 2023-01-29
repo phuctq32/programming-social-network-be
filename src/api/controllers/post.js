@@ -87,7 +87,7 @@ export const like = async (req, res, next) => {
 
 export const unlike = async (req, res, next) => {
     try {
-        const updatedPost = await postService.likePost(req.params.postId, req.userId);
+        const updatedPost = await postService.unlikePost(req.params.postId, req.userId);
 
         res.status(200).json({ updatedPost });
     } catch (err) {
@@ -97,7 +97,7 @@ export const unlike = async (req, res, next) => {
 
 export const view = async (req, res, next) => {
     try {
-        const updatedPost = await postService.likePost(req.params.postId, req.userId);
+        const updatedPost = await postService.viewPost(req.params.postId, req.userId);
 
         res.status(200).json({ updatedPost });
     } catch (err) {

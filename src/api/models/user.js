@@ -26,7 +26,7 @@ const userSchema = new Schema({
         required: true,
         default: false
     },
-    lastActiveAt: {
+    lastLoginAt: {
         type: Date,
         min: '2022-09-05'
     },
@@ -64,9 +64,9 @@ const userSchema = new Schema({
     ]
 }, { timestamps: true });
 
-userSchema.statics.getById = async (id, options) => {
+userSchema.statics.getById = async (id, select, options) => {
     try {
-        const user = await User.findById(id).populate(options);
+        const user = await User.findById(id, select).populate(options);
         if (!user) {
             const error = new Error('User not found.');
             error.statusCode = 404;

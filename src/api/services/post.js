@@ -172,7 +172,7 @@ const unlikePost = async (postId, userId) => {
     try {
         const post = await Post.getById(postId);
 
-        const updatedLikes = post.likes;
+        let updatedLikes = post.likes;
         if (updatedLikes.includes(userId)) {
             updatedLikes = updatedLikes.filter(like => like.toString() !== userId.toString());
             post.likes = updatedLikes;

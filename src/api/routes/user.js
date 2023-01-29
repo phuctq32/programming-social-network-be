@@ -5,6 +5,8 @@ import { changePwValidation } from '../validations/user.js';
 import validationErrorHandler from '../middlewares/validationErrorHandler.js';
 const router = Router();
 
+router.get('/users/:userId', userController.getUser);
+
 router.put(
     '/users/change-password', 
     isAuth, 

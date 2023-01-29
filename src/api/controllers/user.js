@@ -9,3 +9,13 @@ export const changePassword = async (req, res, next) => {
         next(err);
     }
 }
+
+export const getUser = async (req, res, next) => {
+    try {
+        const user = await userService.getUser(req.params.userId);
+
+        res.status(200).json({ user });
+    } catch (err) {
+        next(err);
+    }
+}
