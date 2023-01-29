@@ -113,8 +113,11 @@ const login = async (email, password) => {
                 userId: user._id.toString()
             },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '2 days' }
         );
+
+        user.lastLoginAt = Date.now();
+        await user.save();
 
         return { token, user };
     } catch (err) {
