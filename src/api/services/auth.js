@@ -137,6 +137,14 @@ const forgotPassword = async (email) => {
 
     try {
         const user = await User.getByEmail(email);
+        
+        // check if user is not verified
+        if (!user.isVerified) {
+            const error = new Error('Account is not verified.');
+            error.statusCode = 401;
+            throw error;
+        }
+        
         const token = new Token({
             value: tokenString,
             expiredAt: Date.now() + 3600000,
