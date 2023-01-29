@@ -32,12 +32,18 @@ const changePassword = async (userId, currentPassword, newPassword) => {
 
 const getUser = async (userId) => {
     try {
-        const user = await User.getById(
+        let user = await User.getById(
             userId, 
-            'email name avatar role birthday lastLoginAt -_id',
-            { path: 'role', select: 'name -_id' }
+            'email name avatar role birthday lastLoginAt following -_id',
+        )
+        await user.populate('role', 'name -_id')
+        await user.populate('following', 'name -_id')
+        const followers = await User.find(
+            { following: { $elemMatch: { $eq: userId }} },
+            'name -_id'
         );
-
+        user = user.toObject();
+        user.followers = followers;
         return user;
     } catch (err) {
         throw err;
