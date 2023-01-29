@@ -6,6 +6,7 @@ import tagRoutes from './tag.js';
 import postRoutes from './post.js';
 import commentRoutes from './comment.js';
 import userRoutes from './user.js';
+import adminRoutes from './admin.js';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/api', categoryRoutes);
 router.use('/api', tagRoutes);
 router.use('/api', commentRoutes);
 router.use('/api', userRoutes);
+router.use('/api', adminRoutes);
 
 export default router;
