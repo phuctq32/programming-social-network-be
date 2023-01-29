@@ -25,7 +25,9 @@ const createComment = async ({ userId, postId, parentCommentId, content }) => {
 
 async function getCommentsByParent(postId, parentComment = null) {
     try {
-        const comments = await Comment.find({ post: postId, parentComment }).populate('author', 'email name avatar');
+        const comments = await Comment.find({ post: postId, parentComment })
+            .populate('author', 'email name avatar')
+            .populate('likes', 'email name avatar');
         if (comments.length === 0) {
             return [];
         }
