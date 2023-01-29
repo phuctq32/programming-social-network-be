@@ -1,22 +1,22 @@
 import * as commentService from '../services/comment.js';
 
 export const createComment = async (req, res, next) => {
-    try {   
+    try {
         const comment = await commentService.createComment({
-            postId: req.params.postId,
+            postId: req.body.postId,
             userId: req.userId,
-            parentCommentId: req.params.commentId,
-            content: req.body.content
+            parentCommentId: req.body.parentCommentId,
+            content: req.body.content,
         });
 
-        res.status(201).json({ 
+        res.status(201).json({
             message: 'Created Comment successfully!',
-            comment 
+            comment,
         });
     } catch (err) {
         next(err);
     }
-}
+};
 
 export const getCommentsByPostId = async (req, res, next) => {
     try {
@@ -26,34 +26,34 @@ export const getCommentsByPostId = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-}
+};
 
-export const deleteComment = async (req, res, next) => {
+export const destroyOneComment = async (req, res, next) => {
     try {
-        await commentService.deleteComment(req.params.postId, req.params.commentId, req.userId);
+        const result = await commentService.destroyOneComment(req.params.commentId, req.userId);
 
-        res.status(204).json({ message: 'Comment deleted successfully' });
+        res.status(200).json(result);
     } catch (err) {
         next(err);
     }
-}
+};
 
-export const voteComment = async (req, res, next) => {
+export const destroyAllComment = async (req, res, next) => {
     try {
-        const comment = await commentService.voteComment(req.params.postId, req.params.commentId, req.userId);
+        const result = await commentService.destroyAllComment();
 
-        res.status(200).json({ comment });
+        res.status(200).json(result);
     } catch (err) {
         next(err);
     }
-}
+};
 
-export const unvoteComment = async (req, res, next) => {
+export const toggleLikeComment = async (req, res, next) => {
     try {
-        const comment = await commentService.unvoteComment(req.params.postId, req.params.commentId, req.userId);
+        const comment = await commentService.toggleLikeComment(req.params.commentId, req.userId);
 
-        res.status(200).json({ comment });
+        res.status(200).json(comment);
     } catch (err) {
         next(err);
     }
-}
+};

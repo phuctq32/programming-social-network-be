@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
@@ -17,23 +17,23 @@ const commentSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'Comment',
             required: false,
-            default: null
+            default: null,
         },
-        votes: [
+        likes: [
             {
                 type: Schema.Types.ObjectId,
                 ref: 'User',
-            }
+            },
         ],
         author: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
-    }, 
-    { 
+            ref: 'User',
+        },
+    },
+    {
         timestamps: true,
         toJSON: { virtuals: true },
-        toObject: { virtuals: true } 
+        toObject: { virtuals: true },
     }
 );
 
@@ -56,7 +56,7 @@ commentSchema.statics.getById = async (id) => {
     } catch (err) {
         throw err;
     }
-}
+};
 
 const Comment = mongoose.model('Comment', commentSchema);
 export default Comment;

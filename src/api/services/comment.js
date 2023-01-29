@@ -1,21 +1,19 @@
-import Comment from "../models/comment.js";
-import User from "../models/user.js";
-import Post from "../models/post.js";
+import Comment from '../models/comment.js';
+import User from '../models/user.js';
+import Post from '../models/post.js';
 
 const createComment = async ({ userId, postId, parentCommentId, content }) => {
     try {
-        const author = await User.getById(userId);
-        const post = await Post.findById(postId);
         let parentComment;
         if (parentCommentId) {
             parentComment = await Comment.getById(parentCommentId);
         }
-        
-        const comment = new Comment({ 
-            post: post._id.toString(), 
-            author: author._id.toString(), 
-            parentComment: parentComment ? parentComment._id.toString() : null, 
-            content 
+
+        const comment = new Comment({
+            post: postId,
+            author: userId,
+            parentComment: parentComment ? parentComment._id.toString() : null,
+            content,
         });
         await comment.save();
 
@@ -23,89 +21,96 @@ const createComment = async ({ userId, postId, parentCommentId, content }) => {
     } catch (err) {
         throw err;
     }
+};
+
+async function getCommentsByParent(postId, parentComment = null) {
+    try {
+        const comments = await Comment.find({ post: postId, parentComment }).populate('author', 'email name avatar');
+        if (comments.length === 0) {
+            return [];
+        }
+
+        const commentsWithRepliesPromiseArray = comments.map(async (comment) => {
+            const replies = await getCommentsByParent(postId, comment._id);
+            return {
+                ...comment.toObject(),
+                replies,
+            };
+        });
+
+        return Promise.all(commentsWithRepliesPromiseArray);
+    } catch (err) {
+        throw err;
+    }
 }
 
 const getCommentsByPostId = async (postId) => {
     try {
-        const comments = await Comment
-            .find({ post: postId, parentComment: null })
-            .populate('author', 'name -_id')
-            .populate({
-                path: 'replies',
-                populate: {
-                    path: 'author',
-                    select: 'name -_id',
-                }
-            });
-
+        const comments = await getCommentsByParent(postId);
         return comments;
     } catch (err) {
         throw err;
     }
-}
+};
 
-const deleteComment = async (postId, commentId, userId) => {
+const destroyOneComment = async (commentId, userId) => {
     try {
-        const post = await Post.getById(postId);
-        const comment = await Comment.getById(commentId);
-        const user = await User.getById(userId);
+        const comment = await Comment.findById(commentId);
 
-        if (user._id.toString() !== comment.author.toString()) {
-            const error = new Error("User is not the comment's author");
+        if (!comment) {
+            const error = new Error('Cannot find comment');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        // Check if user is post's creator
+        if (userId.toString() !== comment.author._id.toString()) {
+            const error = new Error('User is not the creator');
             error.statusCode = 403;
             throw error;
         }
 
-        await Comment.deleteMany({ post: post._id, parentComment: comment._id });
-        await Comment.findByIdAndDelete(comment._id);
+        await Comment.findByIdAndDelete(commentId);
+
+        return { success: true };
     } catch (err) {
         throw err;
     }
-}
-
-const voteComment = async (postId, commentId, userId) => {
-    try {
-        await Post.getById(postId);
-        const comment = await Comment.getById(commentId);
-        const user = await User.getById(userId);
-
-        const updatedVotes = comment.votes;
-        if (!updatedVotes.includes(user._id.toString())) {
-            updatedVotes.push(user._id.toString());
-            comment.votes = updatedVotes;
-            await comment.save();
-        }
-        await comment.populate('votes', 'name');
-        
-        return comment;
-    } catch (err) {
-        throw err;
-    }  
-}
-
-const unvoteComment = async (postId, commentId, userId) => {
-    try {
-        await Post.getById(postId);
-        const comment = await Comment.getById(commentId);
-        const user = await User.getById(userId);
-        let updatedVotes = comment.votes;
-        if (updatedVotes.includes(user._id.toString())) {
-            updatedVotes = updatedVotes.filter(vote => vote.toString() !== user._id.toString());
-            comment.votes = updatedVotes;
-            await comment.save();
-        }
-        await comment.populate('votes', 'name');
-
-        return comment;
-    } catch (err) {
-        throw err;
-    }
-}
-
-export {
-    createComment, 
-    getCommentsByPostId,
-    deleteComment,
-    voteComment,
-    unvoteComment
 };
+
+const destroyAllComment = async () => {
+    try {
+        await Comment.deleteMany();
+
+        return { success: true };
+    } catch (err) {
+        throw err;
+    }
+};
+
+const toggleLikeComment = async (commentId, userId) => {
+    try {
+        let comment = await Comment.findById(commentId);
+
+        if (!comment) {
+            const error = new Error('Cannot find comment');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        let likes = comment.likes;
+        if (likes.includes(userId)) {
+            likes = likes.filter((like) => like.toString() !== userId.toString());
+        } else {
+            likes.push(userId);
+        }
+
+        comment = await Comment.findByIdAndUpdate(commentId, { likes }, { new: true });
+
+        return { comment: comment };
+    } catch (err) {
+        throw err;
+    }
+};
+
+export { createComment, getCommentsByPostId, destroyAllComment, destroyOneComment, toggleLikeComment };
