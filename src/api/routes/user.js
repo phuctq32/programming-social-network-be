@@ -15,4 +15,9 @@ router.put(
     userController.changePassword
 );
 
+router.put('/users/:userId/follow', isAuth, userController.toggleFollow);
+router.put('/users/:userId/unfollow', isAuth, userController.toggleFollow);
+
+
+
 export default router;

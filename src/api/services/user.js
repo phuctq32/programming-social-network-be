@@ -43,7 +43,27 @@ const getUser = async (userId) => {
     }
 }
 
+const toggleFollow = async (userId, followingId) => {
+    try {
+        const user = await User.getById(userId);
+
+        let following = user.following;
+        if (following.includes(followingId.toString())) {
+            following = following.filter(follow => follow.toString() !== followingId.toString());
+        } else {
+            following.push(followingId);
+        }
+        user.following = following;
+        await user.save();
+
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export {
     changePassword,
     getUser,
+    toggleFollow
 };
