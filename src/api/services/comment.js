@@ -1,6 +1,6 @@
 import Comment from '../models/comment.js';
 import User from '../models/user.js';
-import Post from '../models/post.js';
+import { roleNames } from '../../configs/constants.js';
 
 const createComment = async ({ userId, postId, parentCommentId, content }) => {
     try {
@@ -58,10 +58,11 @@ const getCommentsByPostId = async (postId) => {
 const destroyOneComment = async (commentId, userId) => {
     try {
         const comment = await Comment.getById(commentId);
+        const user = await User.getById(userId);
 
         // Check if user is comment's author
-        if (userId.toString() !== comment.author._id.toString()) {
-            const error = new Error('User is not the creator');
+        if (user._id.toString() !== comment.author._id.toString() && user.role.name !== roleNames.ADMIN) {
+            const error = new Error('User is not the creator or administrator');
             error.statusCode = 403;
             throw error;
         }

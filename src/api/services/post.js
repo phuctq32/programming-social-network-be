@@ -3,6 +3,7 @@ import Category from '../models/category.js';
 import Tag from '../models/tag.js';
 import User from '../models/user.js';
 import * as imageHandler from '../utils/imageHandler.js';
+import { roleNames } from '../../configs/constants.js';
 
 const getPosts = async (options) => {
     try {
@@ -124,10 +125,11 @@ const deleteSavedPost = async (postId, userId) => {
 const deletePost = async (postId, userId) => {
     try {
         const post = await Post.getById(postId);
+        const user = await User.getById(userId).populate('role');
 
-        // Check if user is post's creator
-        if (userId.toString() !== post.creator._id.toString()) {
-            const error = new Error('User is not the creator');
+        // Check if user is post's creator or admin
+        if (user._id.toString() !== post.creator._id.toString() && user.role.name !== roleNames.ADMIN) {
+            const error = new Error('User is not the creator or administrator');
             error.statusCode = 403;
             throw error;
         }
