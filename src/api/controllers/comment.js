@@ -57,3 +57,13 @@ export const toggleLikeComment = async (req, res, next) => {
         next(err);
     }
 };
+
+export const editComment = async (req, res, next) => {
+    try {
+        const comment = await commentService.editComment(req.params.commentId, req.body, req.userId);
+
+        res.status(200).json(comment);
+    } catch (err) {
+        next(err);
+    }
+};

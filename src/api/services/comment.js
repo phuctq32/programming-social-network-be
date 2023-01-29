@@ -113,4 +113,34 @@ const toggleLikeComment = async (commentId, userId) => {
     }
 };
 
-export { createComment, getCommentsByPostId, destroyAllComment, destroyOneComment, toggleLikeComment };
+const editComment = async (commentId, newFields, userId) => {
+    try {
+        const updateObject = {};
+        let comment = await Comment.findById(commentId);
+
+        if (!comment) {
+            const error = new Error('Cannot find comment');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        // Check if user is cmt's creator
+        if (userId.toString() !== comment.author._id.toString()) {
+            const error = new Error('User is not the creator');
+            error.statusCode = 403;
+            throw error;
+        }
+
+        if (newFields.content) {
+            updateObject.content = newFields.content;
+        }
+
+        comment = await Comment.findByIdAndUpdate(commentId, updateObject, { new: true });
+
+        return { comment: comment };
+    } catch (err) {
+        throw err;
+    }
+};
+
+export { createComment, getCommentsByPostId, destroyAllComment, destroyOneComment, toggleLikeComment, editComment };
