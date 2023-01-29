@@ -88,4 +88,29 @@ const destroyAllComment = async () => {
     }
 };
 
-export { createComment, getCommentsByPostId, destroyAllComment, destroyOneComment };
+const toggleLikeComment = async (commentId, userId) => {
+    try {
+        let comment = await Comment.findById(commentId);
+
+        if (!comment) {
+            const error = new Error('Cannot find comment');
+            error.statusCode = 401;
+            throw error;
+        }
+
+        let likes = comment.likes;
+        if (likes.includes(userId)) {
+            likes = likes.filter((like) => like.toString() !== userId.toString());
+        } else {
+            likes.push(userId);
+        }
+
+        comment = await Comment.findByIdAndUpdate(commentId, { likes }, { new: true });
+
+        return { comment: comment };
+    } catch (err) {
+        throw err;
+    }
+};
+
+export { createComment, getCommentsByPostId, destroyAllComment, destroyOneComment, toggleLikeComment };

@@ -47,3 +47,13 @@ export const destroyAllComment = async (req, res, next) => {
         next(err);
     }
 };
+
+export const toggleLikeComment = async (req, res, next) => {
+    try {
+        const comment = await commentService.toggleLikeComment(req.params.commentId, req.userId);
+
+        res.status(200).json(comment);
+    } catch (err) {
+        next(err);
+    }
+};
