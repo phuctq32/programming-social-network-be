@@ -37,3 +37,23 @@ export const deleteComment = async (req, res, next) => {
         next(err);
     }
 }
+
+export const voteComment = async (req, res, next) => {
+    try {
+        const comment = await commentService.voteComment(req.params.postId, req.params.commentId, req.userId);
+
+        res.status(200).json({ comment });
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const unvoteComment = async (req, res, next) => {
+    try {
+        const comment = await commentService.unvoteComment(req.params.postId, req.params.commentId, req.userId);
+
+        res.status(200).json({ comment });
+    } catch (err) {
+        next(err);
+    }
+}

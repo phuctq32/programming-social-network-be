@@ -12,4 +12,10 @@ router.post('/posts/:postId/:commentId', isAuth, commentController.createComment
 
 router.delete('/posts/:postId/:commentId/delete', isAuth, commentController.deleteComment);
 
+router.put('/posts/:postId/:commentId/vote', isAuth, commentController.voteComment);
+
+router.put('/posts/:postId/:commentId/unvote', isAuth, commentController.unvoteComment);
+
+router.put('posts/:postId/:commentId');
+
 export default router;

@@ -63,8 +63,49 @@ const deleteComment = async (postId, commentId, userId) => {
     }
 }
 
+const voteComment = async (postId, commentId, userId) => {
+    try {
+        await Post.getById(postId);
+        const comment = await Comment.getById(commentId);
+        const user = await User.getById(userId);
+
+        const updatedVotes = comment.votes;
+        if (!updatedVotes.includes(user._id.toString())) {
+            updatedVotes.push(user._id.toString());
+            comment.votes = updatedVotes;
+            await comment.save();
+        }
+        await comment.populate('votes', 'name');
+        
+        return comment;
+    } catch (err) {
+        throw err;
+    }  
+}
+
+const unvoteComment = async (postId, commentId, userId) => {
+    try {
+        await Post.getById(postId);
+        const comment = await Comment.getById(commentId);
+        const user = await User.getById(userId);
+        let updatedVotes = comment.votes;
+        if (updatedVotes.includes(user._id.toString())) {
+            updatedVotes = updatedVotes.filter(vote => vote.toString() !== user._id.toString());
+            comment.votes = updatedVotes;
+            await comment.save();
+        }
+        await comment.populate('votes', 'name');
+
+        return comment;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export {
     createComment, 
     getCommentsByPostId,
-    deleteComment
+    deleteComment,
+    voteComment,
+    unvoteComment
 };

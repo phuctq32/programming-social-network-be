@@ -72,7 +72,7 @@ const updatePost = async ({ postId, title, content, tagId, categoryId, files, us
 
         if (tagId) {
             const tag = await Tag.getById(tagId);
-            editedPost.category = category._id;
+            editedPost.category = tag._id;
         }
 
         if (files) {
