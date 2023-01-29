@@ -1,21 +1,19 @@
-import Comment from "../models/comment.js";
-import User from "../models/user.js";
-import Post from "../models/post.js";
+import Comment from '../models/comment.js';
+import User from '../models/user.js';
+import Post from '../models/post.js';
 
 const createComment = async ({ userId, postId, parentCommentId, content }) => {
     try {
-        const author = await User.getById(userId);
-        const post = await Post.findById(postId);
         let parentComment;
         if (parentCommentId) {
             parentComment = await Comment.getById(parentCommentId);
         }
-        
-        const comment = new Comment({ 
-            post: post._id.toString(), 
-            author: author._id.toString(), 
-            parentComment: parentComment ? parentComment._id.toString() : null, 
-            content 
+
+        const comment = new Comment({
+            post: postId,
+            author: userId,
+            parentComment: parentComment ? parentComment._id.toString() : null,
+            content,
         });
         await comment.save();
 
@@ -23,28 +21,48 @@ const createComment = async ({ userId, postId, parentCommentId, content }) => {
     } catch (err) {
         throw err;
     }
-}
+};
 
-const getCommentsByPostId = async (postId) => {
+async function getCommentsByParent(postId, parentComment = null) {
     try {
-        const comments = await Comment
-            .find({ post: postId, parentComment: null })
-            .populate('author', 'name -_id')
-            .populate({
-                path: 'replies',
-                populate: {
-                    path: 'author',
-                    select: 'name -_id',
-                }
-            });
+        const comments = await Comment.find({ post: postId, parentComment }).populate('author', 'email name avatar');
+        if (comments.length === 0) {
+            return [];
+        }
 
-        return comments;
+        const commentsWithRepliesPromiseArray = comments.map(async (comment) => {
+            const replies = await getCommentsByParent(postId, comment._id);
+            return {
+                ...comment.toObject(),
+                replies,
+            };
+        });
+
+        return Promise.all(commentsWithRepliesPromiseArray);
     } catch (err) {
         throw err;
     }
 }
 
-export {
-    createComment, 
-    getCommentsByPostId
+const getCommentsByPostId = async (postId) => {
+    try {
+        const comments = await getCommentsByParent(postId);
+        console.log(comments);
+
+        return comments;
+    } catch (err) {
+        throw err;
+    }
 };
+
+const destroyAllComment = async () => {
+    try {
+        await Comment.deleteMany();
+
+        return { success: true };
+    } catch (err) {
+        throw err;
+    }
+};
+
+export { createComment, getCommentsByPostId, destroyAllComment };

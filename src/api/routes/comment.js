@@ -1,15 +1,17 @@
-import { Router } from "express";
-import * as commentController from "../controllers/comment.js";
-import isAuth from "../middlewares/isAuth.js";
+import { Router } from 'express';
+import * as commentController from '../controllers/comment.js';
+import isAuth from '../middlewares/isAuth.js';
 
 const router = Router();
 
-router.get('/posts/:postId/comments', commentController.getCommentsByPostId);
+router.get('/comment/get-by-id/:commentId', commentController.getCommentsByPostId);
+router.get('/comment/:postId', commentController.getCommentsByPostId);
 
-router.post('/posts/:postId', isAuth, commentController.createComment);
+router.post('/comment', isAuth, commentController.createComment);
 
-router.post('/posts/:postId/:commentId', isAuth, commentController.createComment);
+router.put('/comment/:commentId');
 
-router.delete('/posts/:postId/:commentId/delete');
+router.delete('/comment/:commentId');
+router.delete('/comment', commentController.destroyAllComment);
 
 export default router;
