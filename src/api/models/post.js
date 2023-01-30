@@ -64,7 +64,7 @@ postSchema.statics.getById = async (id) => {
         const post = await Post.findById(id)
             .populate('category')
             .populate('tag', 'name')
-            .populate('creator', 'name');
+            .populate('creator', 'name avatar');
         if (!post) {
             const error = new Error('Post not found.');
             error.statusCode = 404;
