@@ -12,7 +12,7 @@ const getPosts = async (options) => {
             .skip((options.page - 1) * options.limit)
             .populate('category')
             .populate('tag', 'name')
-            .populate('creator', 'name')
+            .populate('creator', 'name avatar')
             .sort({ createdAt: -1 });
         
         return posts;
@@ -249,7 +249,7 @@ const getFollowingPosts = async (userId) => {
         })
         .populate('category')
         .populate('tag', 'name')
-        .populate('creator', 'name')
+        .populate('creator', 'name avatar')
         .sort({ createdAt: -1 });
 
         return followingPosts;
