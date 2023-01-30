@@ -37,10 +37,10 @@ const getUser = async (userId) => {
             'email name avatar role birthday lastLoginAt following -_id',
         )
         await user.populate('role', 'name -_id')
-        await user.populate('following', 'name -_id')
+        await user.populate('following', 'name avatar')
         const followers = await User.find(
             { following: { $elemMatch: { $eq: userId }} },
-            'name -_id'
+            'name avatar'
         );
         user = user.toObject();
         user.followers = followers;
@@ -86,6 +86,12 @@ const updateUser = async (userId, { name, birthday, avatar }) => {
 
 const toggleFollow = async (userId, followingId) => {
     try {
+        if (userId === followingId) {
+            const error = new Error('Could not follow yourself');
+            error.statusCode = 409;
+            throw error;
+        }
+
         const user = await User.getById(userId);
 
         let following = user.following;
