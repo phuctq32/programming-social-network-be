@@ -174,7 +174,7 @@ const resetPassword = async (resetToken, newPassword) => {
         user.password = hashedPassword;
         await user.save();
 
-        await Token.deleteMany({ userId: userId });
+        await Token.deleteMany({ userId: token.userId });
     } catch (err) {
         throw err;
     }
