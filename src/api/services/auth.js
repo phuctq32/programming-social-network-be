@@ -60,7 +60,7 @@ const signUp = async (userData) => {
             from: process.env.EMAIL,
             to: user.email,
             subject: 'Verification Email',
-            html: get_html_verify(`${process.env.LOCAL_HOST}/api/verification/${verifiedToken}`)
+            html: get_html_verify(`${process.env.LOCALHOST_FE}/verification/${verifiedToken}`)
         });
     } catch (err) {
         throw err;
@@ -156,7 +156,7 @@ const forgotPassword = async (email) => {
             from: process.env.EMAIL,
             to: email,
             subject: 'Reset Password',
-            html: get_html_reset_password(`http://localhost:8080/api/reset-password/${token.value}`)
+            html: get_html_reset_password(`${process.env.LOCALHOST_FE}/reset-password/${token.value}`)
         });
 
         return token.value;
