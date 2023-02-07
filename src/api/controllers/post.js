@@ -139,7 +139,7 @@ export const getFollowingPosts = async (req, res, next) => {
     try {
         const followingPosts = await postService.getFollowingPosts(req.userId);
 
-        res.status(200).json({ followingPosts });
+        res.status(200).json({ posts: followingPosts });
     } catch (err) {
         next(err);
     }
