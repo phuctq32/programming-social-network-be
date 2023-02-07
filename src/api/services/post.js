@@ -7,13 +7,24 @@ import { roleNames } from '../../configs/constants.js';
 
 const getPosts = async (options) => {
     try {
-        const posts = await Post.find()
-            .limit(options.limit)
-            .skip((options.page - 1) * options.limit)
-            .populate('category')
-            .populate('tag', 'name')
-            .populate('creator', 'name avatar')
-            .sort({ createdAt: -1 });
+        let posts;
+        if (options.categoryId) {
+            posts = await Post.find({ category: options.categoryId })
+                .limit(options.limit)
+                .skip((options.page - 1) * options.limit)
+                .populate('category')
+                .populate('tag', 'name')
+                .populate('creator', 'name avatar')
+                .sort({ createdAt: -1 });;
+        } else {
+            posts = await Post.find()
+                .limit(options.limit)
+                .skip((options.page - 1) * options.limit)
+                .populate('category')
+                .populate('tag', 'name')
+                .populate('creator', 'name avatar')
+                .sort({ createdAt: -1 });
+        }
         
         return posts;
     } catch (err) {
@@ -227,7 +238,7 @@ const getSavedPosts = async (userId) => {
     try {
         const user = await User.getById(userId);
 
-        const savedPosts = await Post.find({ creator: user._id.toString() })
+        const savedPosts = await Post.find({ _id: { "$in": user.savedPosts } })
             .populate('category')
             .populate('tag', 'name')
             .populate('creator', 'name')

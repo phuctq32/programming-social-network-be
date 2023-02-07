@@ -4,7 +4,8 @@ export const getPosts = async (req, res, next) => {
     try {
         const options = {
             limit: +req.query.limit,
-            page: +req.query.page
+            page: +req.query.page,
+            categoryId: req.query.category
         };
         const posts = await postService.getPosts(options);
 
@@ -129,7 +130,7 @@ export const getSavedPosts = async (req, res, next) => {
     try {
         const savedPosts = await postService.getSavedPosts(req.userId);
 
-        res.status(200).json({ savedPosts });
+        res.status(200).json({ posts: savedPosts });
     } catch (err) {
         next(err);
     }
