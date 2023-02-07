@@ -15,6 +15,7 @@ const getPosts = async (options) => {
                 .populate('category')
                 .populate('tag', 'name')
                 .populate('creator', 'name avatar')
+                .populate('numComments')
                 .sort({ createdAt: -1 });;
         } else {
             posts = await Post.find()
@@ -23,6 +24,7 @@ const getPosts = async (options) => {
                 .populate('category')
                 .populate('tag', 'name')
                 .populate('creator', 'name avatar')
+                .populate('numComments')
                 .sort({ createdAt: -1 });
         }
         
@@ -242,6 +244,7 @@ const getSavedPosts = async (userId) => {
             .populate('category')
             .populate('tag', 'name')
             .populate('creator', 'name')
+            .populate('numComments')
             .sort({ createdAt: -1 });
 
         return savedPosts;
@@ -261,6 +264,7 @@ const getFollowingPosts = async (userId) => {
         .populate('category')
         .populate('tag', 'name')
         .populate('creator', 'name avatar')
+        .populate('numComments')
         .sort({ createdAt: -1 });
 
         return followingPosts;
