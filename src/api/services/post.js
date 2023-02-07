@@ -194,7 +194,7 @@ const viewPost = async (postId, userId) => {
         const post = await Post.getById(postId);
         const user = await User.getById(userId);
 
-        const updatedViews = post.Views;
+        const updatedViews = post.views;
         if (!updatedViews.includes(user._id.toString())) {
             updatedViews.push(user._id.toString());
             post.views = updatedViews;
