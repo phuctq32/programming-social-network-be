@@ -22,3 +22,13 @@ export const createCategory = async (req, res, next) => {
         next(err);
     }
 }
+
+export const editCategory = async (req, res, next) => {
+    try {
+        const category = await categoryService.editCategory(req.params.categoryId, req.body.name);
+
+        res.status(200).json({ category });
+    } catch (err) {
+        next(err);
+    }
+}
