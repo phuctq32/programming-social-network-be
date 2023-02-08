@@ -5,7 +5,7 @@ export const getPosts = async (req, res, next) => {
         const options = {
             limit: +req.query.limit,
             page: +req.query.page,
-            categoryId: req.query.category
+            categoryId: req.query.categoryId
         };
         const posts = await postService.getPosts(options);
 

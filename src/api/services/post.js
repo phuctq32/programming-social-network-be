@@ -16,7 +16,7 @@ const getPosts = async (options) => {
                 .populate('tag', 'name')
                 .populate('creator', 'name avatar')
                 .populate('numComments')
-                .sort({ createdAt: -1 });;
+                .sort({ createdAt: -1 });
         } else {
             posts = await Post.find()
                 .limit(options.limit)
